@@ -1,0 +1,114 @@
+Goroutines & channels
+Peeking behind the magic curtain
+23 Sep 2020
+
+Adelina Simion
+adelina.simion@cytora.com
+
+* Format of talks
+We have two talks each 45-60mins.
+*Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go*
+introduces and covers the basics.
+*Apprentice* *to* *illusionist:* *concurrency* *patterns*
+takes these basics out for a spin and lets us explore them further.
+
+.image https://media.giphy.com/media/lluj1cauAlO2vQEm8A/giphy.gif _ 450
+
+* Running slide deck locally
+These slides are built with `go` `present`, as it allows us to run `Go` code straight into the slide deck.
+
+.link https://godoc.org/golang.org/x/tools/present
+
+To see them and run the code examples locally you must:
+
+- Have `Go` installed
+- Checkout the slides repository
+
+.link https://github.com/cytora/goroutines-channels-talks
+
+- Install present locally with `go` `get` `golang.org/x/tools/cmd/present`
+- Run `present` from the terminal
+- View the slides at
+
+.link http://127.0.0.1:3999/concurrencytalks.slide#1
+
+* Easy magic tricks: concurrency basics in Go
+.image https://media.giphy.com/media/JOXzH8WcOgR8PLBqtm/giphy.gif _ 500
+* Agenda - Talk I
+In the next 45-60min we will cover:
+
+- Concurrency vs parallelism
+- What is a goroutine?
+- Common uses of goroutines
+- Goroutines basics
+- The WaitGroup
+- Channels
+- The Select keyword
+
+* Concurrency vs parallelism
+Everyone knows the `Go` is designed for concurrency, but what is it?
+
+*Concurrency*:
+- the composition of independently executing processes
+- dealing with lots of things at once
+- execution can complete in any given order
+
+*Parallelism*:
+- the simultaneous execution of (possibly related) computations.
+- doing lots of things at once
+
+See Rob Pike's excellent talk on the Go blog on this topic
+
+.link https://blog.golang.org/waza-talk
+
+* The concurrent & parallel magician
+
+The magician cuts the card deck and entertains his audience with jokes using *paralellism*. He is doing both at the same time.
+
+The magician cuts the card deck and steals a card using *concurrency*.
+We are not sure the order in which these events happened.
+
+.image https://media.giphy.com/media/UV4liSdOaKdw3V9HGI/giphy.gif _ 350
+
+* What is a Goroutine?
+
+- In Go, concurrency is achieved by using Goroutines. They are functions or methods which can run concurrently with others methods and functions
+- Goroutines require *2kb* of memory, while threads require *1Mb* (~500x more)
+- Unlike threads, they are managed by the `Go` runtime not the OS
+- Unlike threads, they are *cooperatively* scheduled and they periodically yield control
+
+.image https://media.giphy.com/media/uNE1fngZuYhIQ/giphy.gif _ 600
+
+* Cool, but why should I care?
+
+Common uses of goroutines are:
+
+- Background processing of large files
+- Handling user requests in web servers
+- Pushing tracking events/logs in the background
+
+Let's give it up for our good friends, the goroutines!
+
+.image https://media.giphy.com/media/26gsgZvwuSg2JZybC/giphy.gif _ 550
+
+* Goroutines in action
+
+Let's start a goroutine. Fingers crossed it will work!
+
+.play first_routine.go
+
+* Apprentice to Illusionist: concurrency patterns in Go
+.image https://media.giphy.com/media/XKjcTrzElUjsaeQ1eg/giphy.gif _ 600
+
+* Agenda - Talk II
+In the next 45-60min we will cover:
+
+- Signalling to Goroutines that work is finished
+- Pipelines
+- Buffered channels and worker pools
+- Fan in, fan out
+- Sample problems & examples
+- Making thread safe data structures
+- The Go race detector
+- Debugger caveats
+
