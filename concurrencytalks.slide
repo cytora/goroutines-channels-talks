@@ -91,11 +91,30 @@ Let's give it up for our good friends, the goroutines!
 
 .image https://media.giphy.com/media/26gsgZvwuSg2JZybC/giphy.gif _ 550
 
-* Goroutines in action
+* Goroutines in action - our first magic trick!
 
 Let's start a goroutine. Fingers crossed it will work!
 
-.play first_routine.go
+.play code/first_routine.go
+
+* Oh no! Fallen at the first hurdle!
+
+Let's have a look at why our previous example didn't work:
+
+- The `main` thread started the magic show
+- The `main` thread started the magician goroutine
+- The `main` thread output immediately shut down the magic show
+- The `main` thread exited
+
+Our magician goroutine never had the chance to return its results!
+
+* Let's give the magician another chance
+
+.image https://media.giphy.com/media/XGhGacEaO9PQ1Kgck3/giphy.gif _ 350
+
+* Waiting for our goroutines - first magic trick reloaded!
+
+.play code/first_routine_sleep.go
 
 * Apprentice to Illusionist: concurrency patterns in Go
 .image https://media.giphy.com/media/XKjcTrzElUjsaeQ1eg/giphy.gif _ 600

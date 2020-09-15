@@ -20,7 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d698108d-dedb-458f-b67e-eb44a9f535c1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/first_routine_sleep.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/concurrencytalks.slide" beforeDir="false" afterPath="$PROJECT_DIR$/concurrencytalks.slide" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/first_routine.go" beforeDir="false" afterPath="$PROJECT_DIR$/code/first_routine.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,6 +67,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/code" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -81,6 +85,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="221" y="100" key="SettingsEditor" timestamp="1600206163758">
