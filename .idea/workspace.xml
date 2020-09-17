@@ -20,10 +20,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d698108d-dedb-458f-b67e-eb44a9f535c1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/code/waitgroups/wg_magic_show.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/first_routine.go" beforeDir="false" afterPath="$PROJECT_DIR$/code/goroutines/first_routine.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/first_routine_sleep.go" beforeDir="false" afterPath="$PROJECT_DIR$/code/goroutines/first_routine_sleep.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/channels/channel_cups_and_balls.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/channels/channel_quick_change.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/goroutines/go_keyword.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/goroutines-channels-talks.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/concurrencytalks.slide" beforeDir="false" afterPath="$PROJECT_DIR$/concurrencytalks.slide" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -94,5 +98,9 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="221" y="100" key="SettingsEditor/0.23.1440.877@0.23.1440.877" timestamp="1600206163758" />
+    <state x="625" y="258" width="670" height="676" key="search.everywhere.popup" timestamp="1600332245038">
+      <screen x="0" y="23" width="1920" height="1057" />
+    </state>
+    <state x="625" y="258" width="670" height="676" key="search.everywhere.popup/1920.203.1440.877/0.23.1920.1057@0.23.1920.1057" timestamp="1600332245038" />
   </component>
 </project>

@@ -6,13 +6,13 @@ Adelina Simion
 adelina.simion@cytora.com
 
 * Format of talks
-We have two talks each 45-60mins.
+We have two talks/magic shows each 45-60mins.
 *Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go*
 introduces and covers the basics.
 *Apprentice* *to* *illusionist:* *concurrency* *patterns*
 takes these basics out for a spin and lets us explore them further.
 
-.image https://media.giphy.com/media/lluj1cauAlO2vQEm8A/giphy.gif _ 450
+.image https://media.giphy.com/media/21T9PmWttOb0EFrrwK/giphy.gif _ 450
 
 * Running slide deck locally
 These slides are built with `go` `present`, as it allows us to run `Go` code straight into the slide deck.
@@ -34,7 +34,7 @@ To see them and run the code examples locally you must:
 
 * Easy magic tricks: concurrency basics in Go
 .image https://media.giphy.com/media/JOXzH8WcOgR8PLBqtm/giphy.gif _ 500
-* Agenda - Talk I
+* Agenda - Magic show I
 In the next 45-60min we will cover:
 
 - Concurrency vs parallelism
@@ -46,12 +46,12 @@ In the next 45-60min we will cover:
 - The Select keyword
 
 * Concurrency vs parallelism
-Everyone knows the `Go` is designed for concurrency, but what is it?
+Everyone knows that `Go` is designed for concurrency, but what is *concurrency*?
 
 *Concurrency*:
 - the composition of independently executing processes
 - dealing with lots of things at once
-- execution can complete in any given order
+- execution can complete in any given order decided by the scheduler
 
 *Parallelism*:
 - the simultaneous execution of (possibly related) computations.
@@ -60,16 +60,15 @@ Everyone knows the `Go` is designed for concurrency, but what is it?
 
 * The concurrent & parallel magician
 
-The magician cuts the card deck and entertains his audience with jokes using *paralellism*. He is doing both at the same time.
+The magician shuffles the card deck and entertains his audience with jokes using *paralellism*. He is doing both at the same time.
 
-The magician cuts the card deck and steals a card using *concurrency*.
-We are not sure the order in which these events happened.
+The magician shuffles the card deck and steals a card using *concurrency*. We are not sure the order in which these events happened.
 
 .image https://media.giphy.com/media/UV4liSdOaKdw3V9HGI/giphy.gif _ 350
 
 * What is a Goroutine?
-
-- In Go, concurrency is achieved by using Goroutines. They are functions or methods which can run concurrently with others methods and functions
+-  In Go, concurrency is achieved by using Goroutines. Goroutines are functions or methods which can run concurrently with other methods and functions
+- Goroutines are sometimes called _lightweight_ _threads_
 - Goroutines require *2kb* of memory, while threads require *1Mb* (~500x more)
 - Unlike threads, they are managed by the `Go` runtime not the OS
 - Unlike threads, they are *cooperatively* scheduled and they periodically yield control
@@ -86,11 +85,18 @@ Common uses of goroutines are:
 
 Let's give it up for our good friends, the goroutines!
 
-.image https://media.giphy.com/media/26gsgZvwuSg2JZybC/giphy.gif _ 550
+.image https://media.giphy.com/media/UDjF1zMreMld6/giphy.gif _ 450
+
+* The go keyword
+Starting go routines is easy!
+
+Prefix the function or method call with the keyword `go` and you will have a new Goroutine running concurrently. Abracadabra!
+
+.code code/goroutines/go_keyword.go /START OMIT/,/END OMIT/
 
 * Goroutines in action - our first magic trick!
 
-Let's start a goroutine. Fingers crossed it will work!
+Let's start the show - our magician will read our minds. Fingers crossed it will work!
 
 .play code/goroutines/first_routine.go
 
@@ -100,15 +106,15 @@ Let's have a look at why our previous example didn't work:
 
 - The `main` thread started the magic show
 - The `main` thread started the magician goroutine
-- The `main` thread output immediately shut down the magic show
+- The `main` thread had no more work and closed down the magic show
 - The `main` thread exited
 
 Our magician goroutine never had the chance to return its results before main shut down the whole program!
 
 When a new Goroutine is started, the goroutine call returns immediately.
-Unlike functions, the control does not wait for the Goroutine to finish executing.
+It is *non-blocking*.
 
-If the main Goroutine terminates then the program will be terminated and no other Goroutine will run.
+If the main thread terminates then the program will be terminated and no other Goroutine will run.
 
 * Let's give the magician another chance
 
@@ -139,11 +145,11 @@ The `sync.WaitGroup`:
 - Removes 1 from the counter when you call `Done()`
 - `Wait()` blocks the current goroutine and it will be released when the counter is zero
 
-* The WaitGroup magic show
+* The WaitGroup Trapeze & Contortionist show
 .play code/waitgroups/wg_magic_show.go  /START OMIT/,/END OMIT/
 
 * Woah, that was a great show!
-All the performers did their tricks and then the magic show gracefully ended!
+All the performers did their tricks and then the show gracefully ended!
 
 .image https://media.giphy.com/media/5heRf3BAtwUtwnCc2m/giphy.gif _ 450
 
@@ -156,8 +162,51 @@ aka "Mistakes Adelina's already done many times"
 - Remember that you can `Add(n)` any integer amount, but `Done()` only decreases the counter by 1 and we will not release the `Wait` until the counter reaches 0
 
 * Channels
+We saw how we could put on a great magic show with the `sync.WaitGroup`, what if the performers needed to work together and pass props to each other?
+In Golang, *channels* have come to our rescue.
 
-* Further reading - Basics
+Channels can be thought as *pipes* through which Goroutines communicate.
+
+- Each channel has a type it is allowed to transport associated with it.
+- `chan` `T` is a channel of type `T`.
+- No other type than declared is allowed to be transported using the channel.
+- The zero value of a channel is `nil`.
+- The channel has to be defined using `make` similar to maps and slices - `make(chan` `T)`
+
+* Sending and receiving from channel
+The syntax to *receive* from a channel `a` is `data` `:=` `<-` `a`.
+The arrow points outwards from `a` and hence we are reading from channel `a` and storing the value to the variable `data`.
+
+The syntax to *write* to a channel `a` is `a` `<-` `data`
+The arrow points towards `a` and hence we are writing `data` to channel `a`.
+
+And now... it's time for another performance!
+
+.image https://media.giphy.com/media/l2YWs1NexTst9YmFG/giphy.gif _ 350
+
+* The Channel Quick Change Trick
+
+.play code/channels/channel_quick_change.go /START OMIT/,/END OMIT/
+
+* Another successful magic trick!
+The magician takes a bow. We have used a channel to get the `main` thread to wait for the juggler to finish his trick.
+We have replaced the `sync.WaitGroup` with a channel.
+This is possible due to the behaviour of channels. Let's examine this in more detail.
+
+.image https://media.giphy.com/media/S98HinM7FizN29m97L/giphy.gif _ 500
+
+* Channels under the hood
+
+* The behaviour of channels
+
+* The select keyword
+
+* The Channel Cups & Balls trick
+
+.play code/channels/channel_cups_and_balls.go /START OMIT/,/END OMIT/
+
+
+* Useful links - concurrency & goroutines
 A complete journey with goroutines
 
 .link https://medium.com/@riteeksrivastava/a-complete-journey-with-goroutines-8472630c7f5c
@@ -174,14 +223,21 @@ Golangbot - goroutines
 
 .link https://golangbot.com/goroutines/
 
+
+* Useful links - channels
+
 Golangbot - channels
 
 .link https://golangbot.com/channels/
 
+Channels in Go
+
+.link https://go101.org/article/channel.html
+
 * Apprentice to Illusionist: concurrency patterns in Go
 .image https://media.giphy.com/media/XKjcTrzElUjsaeQ1eg/giphy.gif _ 600
 
-* Agenda - Talk II
+* Agenda - Magic show II
 In the next 45-60min we will cover:
 
 - Signalling to Goroutines that work is finished
