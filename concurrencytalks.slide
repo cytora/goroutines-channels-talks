@@ -57,9 +57,6 @@ Everyone knows the `Go` is designed for concurrency, but what is it?
 - the simultaneous execution of (possibly related) computations.
 - doing lots of things at once
 
-See Rob Pike's excellent talk on the Go blog on this topic
-
-.link https://blog.golang.org/waza-talk
 
 * The concurrent & parallel magician
 
@@ -95,9 +92,9 @@ Let's give it up for our good friends, the goroutines!
 
 Let's start a goroutine. Fingers crossed it will work!
 
-.play code/first_routine.go
+.play code/goroutines/first_routine.go
 
-* Oh no! Fallen at the first hurdle!
+* Oh no! The magician failed!
 
 Let's have a look at why our previous example didn't work:
 
@@ -106,7 +103,12 @@ Let's have a look at why our previous example didn't work:
 - The `main` thread output immediately shut down the magic show
 - The `main` thread exited
 
-Our magician goroutine never had the chance to return its results!
+Our magician goroutine never had the chance to return its results before main shut down the whole program!
+
+When a new Goroutine is started, the goroutine call returns immediately.
+Unlike functions, the control does not wait for the Goroutine to finish executing.
+
+If the main Goroutine terminates then the program will be terminated and no other Goroutine will run.
 
 * Let's give the magician another chance
 
@@ -114,7 +116,67 @@ Our magician goroutine never had the chance to return its results!
 
 * Waiting for our goroutines - first magic trick reloaded!
 
-.play code/first_routine_sleep.go
+.play code/goroutines/first_routine_sleep.go  /START OMIT/,/END OMIT/
+
+* The magician did his trick!
+The magician takes a bow, he's done his trick, but there are some problems:
+
+- The magic show ends a long time after the magician ends = *waste* *of* *resources*
+- The sleep is still no guarantee that we will wait for the magician if he is slow = *intermittent* *bug*
+
+We need something better!
+
+.image https://media.giphy.com/media/KOBFnpQdaKChW/giphy.gif _ 400
+
+* The WaitGroup
+To ensure that we always wait for all goroutines to finish we can use `sync.WaitGroup`.
+This will help us block the main thread until our goroutines finish and help remove that wasteful sleep.
+
+The `sync.WaitGroup`:
+- Has three functions: `Add(int)`, `Wait()` and `Done()`
+- Has an inner counter that starts at zero and maintains the state of the `WaitGroup`
+- Adds `n` to the counter when you call `Add(n)`
+- Removes 1 from the counter when you call `Done()`
+- `Wait()` blocks the current goroutine and it will be released when the counter is zero
+
+* The WaitGroup magic show
+.play code/waitgroups/wg_magic_show.go  /START OMIT/,/END OMIT/
+
+* Woah, that was a great show!
+All the performers did their tricks and then the magic show gracefully ended!
+
+.image https://media.giphy.com/media/5heRf3BAtwUtwnCc2m/giphy.gif _ 450
+
+* WaitGroup gotchas
+aka "Mistakes Adelina's already done many times"
+
+- `WaitGroup` does not need to be passed any params and is usually declared as `var` `wg` `sync.WaitGroup`
+- Make sure to use `defer` `wg.Done()` inside your Goroutines. This will ensure you release the `WaitGroup` even if your goroutine errors/panics
+- Make sure you pass a pointer to the `WaitGroup` to your Goroutines using `&wg`. Otherwise, a copy will be passed to the function and you will not release anything to the original `main` blocking `WaitGroup`
+- Remember that you can `Add(n)` any integer amount, but `Done()` only decreases the counter by 1 and we will not release the `Wait` until the counter reaches 0
+
+* Channels
+
+* Further reading - Basics
+A complete journey with goroutines
+
+.link https://medium.com/@riteeksrivastava/a-complete-journey-with-goroutines-8472630c7f5c
+
+Concurrency and parallelism in Golang
+
+.link https://medium.com/@tilaklodha/concurrency-and-parallelism-in-golang-5333e9a4ba64
+
+Rob Pike's excellent talk on the Go blog
+
+.link https://blog.golang.org/waza-talk
+
+Golangbot - goroutines
+
+.link https://golangbot.com/goroutines/
+
+Golangbot - channels
+
+.link https://golangbot.com/channels/
 
 * Apprentice to Illusionist: concurrency patterns in Go
 .image https://media.giphy.com/media/XKjcTrzElUjsaeQ1eg/giphy.gif _ 600
