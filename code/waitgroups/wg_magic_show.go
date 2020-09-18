@@ -5,24 +5,24 @@ import (
 	"sync"
 )
 //START OMIT
-func trapeze(wg *sync.WaitGroup) {
+func magician(wg *sync.WaitGroup) {
 	defer wg.Done()
-	fmt.Println("The acrobat jumps the trapeze.")
+	fmt.Println("The magician catches the bullet fired at him!")
 }
-func contortionist(wg *sync.WaitGroup) {
+func assistant(wg *sync.WaitGroup) {
 	defer wg.Done()
-	fmt.Println("The contortionist takes the stage.")
+	fmt.Println("The assistant fires a bullet at the magician!")
 }
 func main() {
 	fmt.Println("The magic show has started!")
 	var wg sync.WaitGroup
 
-	// tell our performers it's time for the show
-	wg.Add(3)
-	go trapeze(&wg)
-	go trapeze(&wg)
-	go contortionist(&wg)
-	wg.Wait() // wait for our performers to finish
+	wg.Add(1)
+	go assistant(&wg)
+	wg.Wait()  // wait for the assistant to fire the gun
+	wg.Add(1)
+	go magician(&wg)
+	wg.Wait() // wait for the magician to reveal the bullet
 
 	// end the magic show
 	fmt.Println("The magic show has ended!")

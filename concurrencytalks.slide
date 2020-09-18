@@ -145,11 +145,11 @@ The `sync.WaitGroup`:
 - Removes 1 from the counter when you call `Done()`
 - `Wait()` blocks the current goroutine and it will be released when the counter is zero
 
-* The WaitGroup Trapeze & Contortionist show
+* The WaitGroup Bullet catch show
 .play code/waitgroups/wg_magic_show.go  /START OMIT/,/END OMIT/
 
 * Woah, that was a great show!
-All the performers did their tricks and then the show gracefully ended!
+
 
 .image https://media.giphy.com/media/5heRf3BAtwUtwnCc2m/giphy.gif _ 450
 
