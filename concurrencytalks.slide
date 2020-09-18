@@ -171,6 +171,7 @@ Channels can be thought as *pipes* through which Goroutines communicate.
 - No other type than declared is allowed to be transported using the channel.
 - The zero value of a channel is `nil`.
 - The channel has to be defined using `make` similar to maps and slices - `make(chan` `T)`
+- Channels can be closed to signal that no other values will sent through the pipe - `close(a)`
 
 * Sending and receiving from channel
 The syntax to *receive* from a channel `a` is `data` `:=` `<-` `a`.
@@ -194,9 +195,40 @@ This is possible due to the behaviour of channels. Let's examine this in more de
 
 .image https://media.giphy.com/media/S98HinM7FizN29m97L/giphy.gif _ 500
 
-* Channels under the hood
-
 * The behaviour of channels
+The reason why we could replace the `sync.WaitGroup` with a channel  is because the read/receive operation of channels is blocking.
+This meant that the `main` thread blocked until the `quickChange` sent the value on the channel after the trick!
+Alakazam!
+
+.image channel_behaviour.png _ 950
+
+* Buffered channels
+Earlier we said that channels were created with `make(chan` `T)`.
+This syntax will create a channel or pipe with capacity 0.
+Due to the blocking property of channel reads and sends, a single value can be sent, then another one may not be sent until the original value is read.
+
+It is possible to create a channel with a *buffer*. This allows us to send multiple values down the pipe without waiting for each values to travel through.
+
+*Buffered* *channels* can be created by passing an additional capacity parameter to the `make` function which specifies the size of the buffer.
+
+`make(chan` `T,` `capacity)`
+
+Time to see them in action!
+
+* The buffered channel Card Trick
+
+.play code/channels/buffered_channels_card_trick.go
+
+* Channels under the hood
+We can think of each channel consisting of three FIFO (first in, first out) queues internally:
+- the *receiving* goroutine queue: goroutines in this queue are all in blocking state and waiting to receive values from that channel
+- the *sending* goroutine queue: goroutines in this queue are all in blocking state and waiting to send values to that channel
+- the *value* queue: holds anywhere between 0 and buffer size amount of values
+
+Each channel internally holds a mutex lock which is used to avoid data races in all kinds of operations.
+
+* Closing channels and for range
+
 
 * The select keyword
 
