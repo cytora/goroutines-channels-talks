@@ -98,7 +98,7 @@ Prefix the function or method call with the keyword `go` and you will have a new
 
 Let's start the show - our magician will read our minds. Fingers crossed it will work!
 
-.play code/goroutines/first_routine.go
+.play code/goroutines/first_routine.go /START OMIT/,/END OMIT/
 
 * Oh no! The magician failed!
 
@@ -145,11 +145,10 @@ The `sync.WaitGroup`:
 - Removes 1 from the counter when you call `Done()`
 - `Wait()` blocks the current goroutine and it will be released when the counter is zero
 
-* The WaitGroup Bullet catch show
+* The WaitGroup Bullet Catch
 .play code/waitgroups/wg_magic_show.go  /START OMIT/,/END OMIT/
 
 * Woah, that was a great show!
-
 
 .image https://media.giphy.com/media/5heRf3BAtwUtwnCc2m/giphy.gif _ 450
 

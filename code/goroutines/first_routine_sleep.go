@@ -4,15 +4,16 @@ import (
 	"fmt"
 	"time"
 )
+//START OMIT
 func readMindsAgain() {
+	time.Sleep(500 * time.Millisecond)
 	fmt.Println("You chose the Queen of Hearts!")
 }
-
-//START OMIT
 func main() {
-	// start the magic show
 	fmt.Println("The magic show has started!")
+	time.Sleep(1 * time.Second)
 	fmt.Println("Think of a playing card.")
+	time.Sleep(1 * time.Second)
 	fmt.Println("Our magician will now read your mind!")
 
 	// tell magician to read our minds
