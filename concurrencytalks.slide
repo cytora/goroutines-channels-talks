@@ -213,29 +213,57 @@ It is possible to create a channel with a *buffer*. This allows us to send multi
 
 `make(chan` `T,` `capacity)`
 
-Time to see them in action!
+* Closing channels and the for range
+Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel.
+Receivers can use an additional variable while receiving data from the channel to check whether the channel has been closed.
 
-* The buffered channel Card Trick
+`v,` `ok` `:=` `<-ch`
 
-.play code/channels/buffered_channels_card_trick.go
+In the above statement `ok` is true if the value was received by a successful send operation to a channel.
+If `ok` is false it means that we are reading from a closed channel. The value read from a closed channel will be the zero value of the channel's type.
+A closed channel will *immediately* return when read from.
+
+The *for* *range* form of the for loop can be used to receive values from a channel until it is closed. Once the channel is closed, the loop automatically exits.
+
+* The for range Three card guess
+This trick we will need a volunteer to pick three cards...
+
+.play code/channels/for_range_magic_trick.go /START OMIT/,/END OMIT/
 
 * Channels under the hood
-We can think of each channel consisting of three FIFO (first in, first out) queues internally:
+We can think of each channel consisting of three FIFO (first in, first out) queues:
+
 - the *receiving* goroutine queue: goroutines in this queue are all in blocking state and waiting to receive values from that channel
 - the *sending* goroutine queue: goroutines in this queue are all in blocking state and waiting to send values to that channel
 - the *value* queue: holds anywhere between 0 and buffer size amount of values
 
 Each channel internally holds a mutex lock which is used to avoid data races in all kinds of operations.
 
-* Closing channels and for range
+* Behaviour of channels - revisited
 
+Receiving from a closed channel? Easy, send the zero value of that type.
+Sending to a closed channel? Panic as we don't to add the goroutine to the sending queue and block.
+
+.image channel_behaviour.png _ 950
 
 * The select keyword
 
-* The Channel Cups & Balls trick
+The `select` statement is used to choose from multiple send/receive channel operations.
+The `select` statement blocks until one of the send/receive operation is ready.
+If multiple operations are ready, one of them is chosen at random.
+The `default` case in a `select` statement is executed when none of the other case is ready. This is generally used to prevent the `select` statement from blocking.
 
-.play code/channels/channel_cups_and_balls.go /START OMIT/,/END OMIT/
+.code code/channels/select_syntax.go /START OMIT/,/END OMIT/
 
+* The Select Cups & Balls trick
+
+.play code/channels/select_magic_trick.go /START OMIT/,/END OMIT/
+
+* Magic show curtain drop
+Woah! What an evening of entertainment this has been!
+We hope you all enjoyed yourselves!
+
+Our magicians have shown you the following magic tricks:
 
 * Useful links - concurrency & goroutines
 A complete journey with goroutines
@@ -264,6 +292,10 @@ Golangbot - channels
 Channels in Go
 
 .link https://go101.org/article/channel.html
+
+Golangbot - select
+
+.link https://golangbot.com/select/
 
 * Apprentice to Illusionist: concurrency patterns in Go
 .image https://media.giphy.com/media/XKjcTrzElUjsaeQ1eg/giphy.gif _ 600
