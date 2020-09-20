@@ -7,19 +7,20 @@ adelina.simion@cytora.com
 
 * Format of talks
 We have two talks/magic shows each 45-60mins.
-*Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go*
+*Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go* (23/09/2020)
 introduces and covers the basics.
-*Apprentice* *to* *illusionist:* *concurrency* *patterns*
+*Apprentice* *to* *illusionist:* *concurrency* *patterns* (30/09/2020)
 takes these basics out for a spin and lets us explore them further.
 
 .image https://media.giphy.com/media/21T9PmWttOb0EFrrwK/giphy.gif _ 450
 
 * Running slide deck locally
-These slides are built with `go` `present`, as it allows us to run `Go` code straight into the slide deck.
+These slides are built with `go` `present`.
 
 .link https://godoc.org/golang.org/x/tools/present
 
-To see them and run the code examples locally you must:
+As we have not made them public, you can only see them locally.
+To see them and run the code examples you must:
 
 - Have `Go` installed
 - Checkout the slides repository
@@ -27,7 +28,7 @@ To see them and run the code examples locally you must:
 .link https://github.com/cytora/goroutines-channels-talks
 
 - Install present locally with `go` `get` `golang.org/x/tools/cmd/present`
-- Run `present` from the terminal
+- Run `present` `-use_playground` from the terminal
 - View the slides at
 
 .link http://127.0.0.1:3999/concurrencytalks.slide#1
@@ -42,8 +43,8 @@ In the next 45-60min we will cover:
 - Common uses of goroutines
 - Goroutines basics
 - The WaitGroup
-- Channels
-- The Select keyword
+- Channels basics
+- Closing channels & for range
 
 * Concurrency vs parallelism
 Everyone knows that `Go` is designed for concurrency, but what is *concurrency*?
@@ -54,8 +55,9 @@ Everyone knows that `Go` is designed for concurrency, but what is *concurrency*?
 - execution can complete in any given order decided by the scheduler
 
 *Parallelism*:
-- the simultaneous execution of (possibly related) computations.
+- the simultaneous execution of (possibly related) computations
 - doing lots of things at once
+- execution is happening simultaneously and independently
 
 
 * The concurrent & parallel magician
@@ -83,18 +85,17 @@ Common uses of goroutines are:
 - Handling user requests in web servers
 - Pushing tracking events/logs in the background
 
-Let's give it up for our good friends, the goroutines!
-
-.image https://media.giphy.com/media/UDjF1zMreMld6/giphy.gif _ 450
+Most importantly, goroutines allow our programs to run more than one function
 
 * The go keyword
-Starting go routines is easy!
-
 Prefix the function or method call with the keyword `go` and you will have a new Goroutine running concurrently. Abracadabra!
 
 .code code/goroutines/go_keyword.go /START OMIT/,/END OMIT/
 
-* Goroutines in action - our first magic trick!
+.image https://media.giphy.com/media/UDjF1zMreMld6/giphy.gif _ 400
+
+
+* The Goroutine Mentalist trick
 
 Let's start the show - our magician will read our minds. Fingers crossed it will work!
 
@@ -104,23 +105,23 @@ Let's start the show - our magician will read our minds. Fingers crossed it will
 
 Let's have a look at why our previous example didn't work:
 
-- The `main` thread started the magic show
-- The `main` thread started the magician goroutine
-- The `main` thread had no more work and closed down the magic show
-- The `main` thread exited
+- The `main` goroutine started the magic show
+- The `main` goroutine started the magician goroutine
+- The `main` goroutine had no more work and closed down the magic show
+- The `main` goroutine exited
 
 Our magician goroutine never had the chance to return its results before main shut down the whole program!
 
 When a new Goroutine is started, the goroutine call returns immediately.
 It is *non-blocking*.
 
-If the main thread terminates then the program will be terminated and no other Goroutine will run.
+If the main goroutine terminates then the program will be terminated and no other Goroutine will run.
 
 * Let's give the magician another chance
 
 .image https://media.giphy.com/media/XGhGacEaO9PQ1Kgck3/giphy.gif _ 350
 
-* Waiting for our goroutines - first magic trick reloaded!
+* Waiting for our goroutines - the Goroutine Mentalist trick reloaded!
 
 .play code/goroutines/first_routine_sleep.go  /START OMIT/,/END OMIT/
 
@@ -135,10 +136,10 @@ We need something better!
 .image https://media.giphy.com/media/KOBFnpQdaKChW/giphy.gif _ 400
 
 * The WaitGroup
-To ensure that we always wait for all goroutines to finish we can use `sync.WaitGroup`.
-This will help us block the main thread until our goroutines finish and help remove that wasteful sleep.
+We can use `sync.WaitGroup` to ensure that the main goroutine waits for other goroutines to finish. This will remove that wasteful sleep and guarantee that we always wait for magic tricks to end.
 
 The `sync.WaitGroup`:
+
 - Has three functions: `Add(int)`, `Wait()` and `Done()`
 - Has an inner counter that starts at zero and maintains the state of the `WaitGroup`
 - Adds `n` to the counter when you call `Add(n)`
@@ -148,26 +149,25 @@ The `sync.WaitGroup`:
 * The WaitGroup Bullet Catch
 .play code/waitgroups/wg_magic_show.go  /START OMIT/,/END OMIT/
 
-* Woah, that was a great show!
+* Woah, the magician caught the bullet!
+The `sync.WaitGroup` guaranteed that the assistant fires before the magician catches the bullet AND that the main goroutine waited for the trick to end.
 
-.image https://media.giphy.com/media/5heRf3BAtwUtwnCc2m/giphy.gif _ 450
+.image https://media.giphy.com/media/eIm624c8nnNbiG0V3g/giphy.gif _ 550
 
 * WaitGroup gotchas
 aka "Mistakes Adelina's already done many times"
 
-- `WaitGroup` does not need to be passed any params and is usually declared as `var` `wg` `sync.WaitGroup`
+- `WaitGroup` does not need to be passed any params and is usually declared as `var` `wg` `sync.WaitGroup` as shown
 - Make sure to use `defer` `wg.Done()` inside your Goroutines. This will ensure you release the `WaitGroup` even if your goroutine errors/panics
 - Make sure you pass a pointer to the `WaitGroup` to your Goroutines using `&wg`. Otherwise, a copy will be passed to the function and you will not release anything to the original `main` blocking `WaitGroup`
 - Remember that you can `Add(n)` any integer amount, but `Done()` only decreases the counter by 1 and we will not release the `Wait` until the counter reaches 0
 
 * Channels
 We saw how we could put on a great magic show with the `sync.WaitGroup`, what if the performers needed to work together?
-In Golang, *channels* have come to our rescue.
-Channels can be thought as *pipes* through which Goroutines communicate.
+In Golang, *channels* have come to our rescue. Channels can be thought as *pipes* through which Goroutines communicate.
 
 - Each channel has a type it is allowed to transport associated with it.
-- `chan` `T` is a channel of type `T`.
-- No other type than declared is allowed to be transported using the channel.
+- `chan` `T` is a channel of type `T`. No other type than `T` is allowed to be transported using the channel.
 - The zero value of a channel is `nil`.
 - The channel has to be defined using `make` similar to maps and slices - `make(chan` `T)`
 - Channels can be closed to signal that no other values will sent through the pipe - `close(a)`
@@ -188,7 +188,7 @@ And now... it's time for another performance!
 .play code/channels/channel_quick_change.go /START OMIT/,/END OMIT/
 
 * Another successful magic trick!
-The magician takes a bow. We have used a channel to get the `main` thread to wait for the juggler to finish his trick.
+The magician takes a bow. We have used a channel to get the `main` goroutine to wait for the magician to finish the Quick Change.
 We have replaced the `sync.WaitGroup` with a channel.
 This is possible due to the behaviour of channels. Let's examine this in more detail.
 
@@ -196,21 +196,9 @@ This is possible due to the behaviour of channels. Let's examine this in more de
 
 * The behaviour of channels
 The reason why we could replace the `sync.WaitGroup` with a channel  is because the read/receive operation of channels is blocking.
-This meant that the `main` thread blocked until the `quickChange` sent the value on the channel after the trick!
-Alakazam!
+This meant that the `main` goroutine blocked until the `quickChange` sent the value on the channel after the trick!
 
 .image channel_behaviour.png _ 950
-
-* Buffered channels
-Earlier we said that channels were created with `make(chan` `T)`.
-This syntax will create a channel or pipe with capacity 0.
-Due to the blocking property of channel reads and sends, a single value can be sent, then another one may not be sent until the original value is read.
-
-It is possible to create a channel with a *buffer*. This allows us to send multiple values down the pipe without waiting for each values to travel through.
-
-*Buffered* *channels* can be created by passing an additional capacity parameter to the `make` function which specifies the size of the buffer.
-
-`make(chan` `T,` `capacity)`
 
 * Closing channels and the for range
 Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel.
@@ -224,47 +212,44 @@ A closed channel will *immediately* return when read from.
 
 The *for* *range* form of the for loop can be used to receive values from a channel until it is closed. Once the channel is closed, the loop automatically exits.
 
-* The for range Three card guess
-This trick we will need a volunteer to pick three cards...
-
+* The for range Card Shuffle
 .play code/channels/for_range_magic_trick.go /START OMIT/,/END OMIT/
+
+* What a great shuffle!
+A channel was used to communicated with the magician and tell him when to stop shuffling. The channel is closed when we are done picking card and the loop exits.
+A separate channel was used to ensure that the goroutine finished its work before exiting. `main` waits for a value from this separate channel before exiting.
+Closing the channel will make it immediately return the zero value, unblocking `main`
+
+.image https://media.giphy.com/media/Ok2oKUe5Mnq3m60vFJ/giphy.gif _ 350
 
 * Channels under the hood
 We can think of each channel consisting of three FIFO (first in, first out) queues:
 
 - the *receiving* goroutine queue: goroutines in this queue are all in blocking state and waiting to receive values from that channel
 - the *sending* goroutine queue: goroutines in this queue are all in blocking state and waiting to send values to that channel
-- the *value* queue: holds anywhere between 0 and buffer size amount of values
+- the *value* queue: holds anywhere between 0 and buffer size amount of values (more on buffers in next session)
 
 Each channel internally holds a mutex lock which is used to avoid data races in all kinds of operations.
 
 * Behaviour of channels - revisited
 
-Receiving from a closed channel? Easy, send the zero value of that type.
-Sending to a closed channel? Panic as we don't to add the goroutine to the sending queue and block.
+Receiving from a closed channel? Easy, send the zero value of that type
+Sending to a closed channel? Panic as we don't to add the goroutine to the sending queue and block it when we know other values are not going to come
+A value when there is a goroutine waiting for one? Dequeue that goroutine and give it that value
 
 .image channel_behaviour.png _ 950
 
-* The select keyword
-
-The `select` statement is used to choose from multiple send/receive channel operations.
-The `select` statement blocks until one of the send/receive operation is ready.
-If multiple operations are ready, one of them is chosen at random.
-The `default` case in a `select` statement is executed when none of the other case is ready. This is generally used to prevent the `select` statement from blocking.
-
-.code code/channels/select_syntax.go /START OMIT/,/END OMIT/
-
-* The Select Cups & Balls trick
-
-.play code/channels/select_magic_trick.go /START OMIT/,/END OMIT/
-
 * Magic show curtain drop
-Woah! What an evening of entertainment this has been!
-We hope you all enjoyed yourselves!
+Woah! What a great show! We hope you all enjoyed yourselves!
 
 Our magicians have shown you the following magic tricks:
 
-* Useful links - concurrency & goroutines
+- *Mentalist* trick: doing basic work with goroutines and waiting for them to complete with sleep
+- *Bullet* *Catch* trick: guarantee goroutine execution completion and order using the `sync.WaitGroup`
+- *Quick* *Change* trick: signalling work is completed using channels instead of `sync.WaitGroup` and exploring the blocking behaviour of channel sends/receives
+- *Card* *Shuffle* trick: receiving values using the for range as well as closing channels to show work has completed
+
+* Useful links - goroutines
 A complete journey with goroutines
 
 .link https://medium.com/@riteeksrivastava/a-complete-journey-with-goroutines-8472630c7f5c
@@ -281,7 +266,6 @@ Golangbot - goroutines
 
 .link https://golangbot.com/goroutines/
 
-
 * Useful links - channels
 
 Golangbot - channels
@@ -292,9 +276,13 @@ Channels in Go
 
 .link https://go101.org/article/channel.html
 
-Golangbot - select
+Go by example - range over channels
 
-.link https://golangbot.com/select/
+.link https://gobyexample.com/range-over-channels
+
+* See you next week!
+
+.image https://media.giphy.com/media/7yojoQtevjOCI/giphy.gif _ 550
 
 * Apprentice to Illusionist: concurrency patterns in Go
 .image https://media.giphy.com/media/XKjcTrzElUjsaeQ1eg/giphy.gif _ 600
@@ -302,12 +290,35 @@ Golangbot - select
 * Agenda - Magic show II
 In the next 45-60min we will cover:
 
+- The `select` keyword
 - Signalling to Goroutines that work is finished
-- Pipelines
 - Buffered channels and worker pools
-- Fan in, fan out
+- Pipelines
 - Sample problems & examples
 - Making thread safe data structures
 - The Go race detector
 - Debugger caveats
 
+* The select keyword
+
+The `select` statement is used to choose from multiple send/receive channel operations.
+The `select` statement blocks until one of the send/receive operation is ready.
+If multiple operations are ready, one of them is chosen at random.
+The `default` case in a `select` statement is executed when none of the other case is ready. This is generally used to prevent the `select` statement from blocking.
+
+.code code/channels/select_syntax.go /START OMIT/,/END OMIT/
+
+* The Select Cups & Balls trick
+
+.play code/channels/select_magic_trick.go /START OMIT/,/END OMIT/
+
+* Buffered channels
+Earlier we said that channels were created with `make(chan` `T)`.
+This syntax will create a channel or pipe with capacity 0.
+Due to the blocking property of channel reads and sends, a single value can be sent, then another one may not be sent until the original value is read.
+
+It is possible to create a channel with a *buffer*. This allows us to send multiple values down the pipe without waiting for each values to travel through.
+
+*Buffered* *channels* can be created by passing an additional capacity parameter to the `make` function which specifies the size of the buffer.
+
+`make(chan` `T,` `capacity)`

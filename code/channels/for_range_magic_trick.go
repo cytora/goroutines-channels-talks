@@ -6,25 +6,27 @@ import (
 )
 
 //START OMIT
-var cardPicks = []string {"queen of hearts", "four of clubs", "jack of spades"}
-func magician(cards chan string) {
-	for c := range cards {
-		time.Sleep(500 * time.Millisecond)
-		fmt.Printf("The magician guesses you picked %s\n", c)
+var topCards = []string {"queen of hearts", "four of clubs", "jack of spades"}
+func shuffle(signals chan bool, done chan bool) {
+	var pcount int
+	for range signals {
+		fmt.Printf("The magician shuffles the deck.\n Topcard is %s.\n", topCards[pcount])
+		pcount++
 	}
+	fmt.Println("The magician takes a bow")
+	close(done) //close this channel to show we are done and unblock main
 }
 func main() {
 	fmt.Println("The magic show has started!")
-	time.Sleep(1 * time.Second)
-
-	cards := make(chan string) //channel for card picks to send to the magician
-	go magician(cards)
-	for _,p := range cardPicks {
-		fmt.Printf("The volunteer picks %s\n", p)
-		cards <- p // signal card pick to magician
-		time.Sleep(1 * time.Second)
+	signals := make(chan bool) //channel for card picks to send to the magician
+	done := make(chan bool) //channel to signal that the magician finished bowing
+	go shuffle(signals, done)
+	for range topCards {
+		time.Sleep(2 * time.Second)
+		signals <- true //signal to stop the shuffle and reveal the top card
 	}
-
+	close(signals)
+	<-done
 	fmt.Println("The magic show has ended!")
 }
 //END OMIT

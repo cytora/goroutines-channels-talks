@@ -12,8 +12,8 @@ To see them and run the code examples locally you must:
 
  https://github.com/cytora/goroutines-channels-talks
 
-- Install present locally with `go` `get` `golang.org/x/tools/cmd/present`
-- Run `present` from the terminal
+- Install present locally with `go get golang.org/x/tools/cmd/present`
+- Run `present -use_playground` from the terminal
 - View the slides at
 
 http://127.0.0.1:3999/concurrencytalks.slide#1
