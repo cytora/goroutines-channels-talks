@@ -8,7 +8,7 @@ import (
 
 //START OMIT
 var cupPicks = []string {"cup 1", "cup 2", "cup 1", "cup 3", "cup 2", "cup 3"}
-func cupsAndBalls(cupPicks <-chan string, done <-chan bool, wg *sync.WaitGroup) {
+func cupsAndBalls(cupPicks chan string, done chan bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for {
 		select {

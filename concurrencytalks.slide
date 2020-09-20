@@ -161,9 +161,8 @@ aka "Mistakes Adelina's already done many times"
 - Remember that you can `Add(n)` any integer amount, but `Done()` only decreases the counter by 1 and we will not release the `Wait` until the counter reaches 0
 
 * Channels
-We saw how we could put on a great magic show with the `sync.WaitGroup`, what if the performers needed to work together and pass props to each other?
+We saw how we could put on a great magic show with the `sync.WaitGroup`, what if the performers needed to work together?
 In Golang, *channels* have come to our rescue.
-
 Channels can be thought as *pipes* through which Goroutines communicate.
 
 - Each channel has a type it is allowed to transport associated with it.
