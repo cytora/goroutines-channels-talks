@@ -42,9 +42,8 @@ In the next 45-60min we will cover:
 - What is a goroutine?
 - Common uses of goroutines
 - Goroutines basics
-- The WaitGroup
+- The Mutex & the WaitGroup
 - Channels basics
-- Closing channels & for range
 
 * Concurrency vs parallelism
 Everyone knows that `Go` is designed for concurrency, but what is *concurrency*?
@@ -75,7 +74,7 @@ The magician shuffles the card deck and steals a card using *concurrency*. We ar
 - Unlike threads, they are managed by the `Go` runtime not the OS
 - Unlike threads, they are *cooperatively* scheduled and they periodically yield control
 
-.image https://media.giphy.com/media/uNE1fngZuYhIQ/giphy.gif _ 600
+There are other differences between threads and goroutines, but this is outside the scope of our discussion/magic show today.
 
 * Cool, but why should I care?
 
@@ -85,10 +84,14 @@ Common uses of goroutines are:
 - Handling user requests in web servers
 - Pushing tracking events/logs in the background
 
-Most importantly, goroutines allow our programs to run more than one function
+Most importantly, goroutines allow our programs to run more than one function.
+Goroutines are absolutely essential to performant production grade software.
+
+.image https://media.giphy.com/media/Nx85vtTY70T3W/giphy.gif _ 400
 
 * The go keyword
-Prefix the function or method call with the keyword `go` and you will have a new Goroutine running concurrently. Abracadabra!
+Prefix the function or method call with the keyword `go` and you will have a new Goroutine running concurrently with the main goroutine.
+Abracadabra! Let the magic tricks begin!
 
 .code code/goroutines/go_keyword.go /START OMIT/,/END OMIT/
 
@@ -112,8 +115,7 @@ Let's have a look at why our previous example didn't work:
 
 Our magician goroutine never had the chance to return its results before main shut down the whole program!
 
-When a new Goroutine is started, the goroutine call returns immediately.
-It is *non-blocking*.
+When a new Goroutine is started, the goroutine call returns immediately. It is *non-blocking* and allows the goroutine that it is created from to continue its work.
 
 If the main goroutine terminates then the program will be terminated and no other Goroutine will run.
 
@@ -135,8 +137,53 @@ We need something better!
 
 .image https://media.giphy.com/media/KOBFnpQdaKChW/giphy.gif _ 400
 
+* The sync package
+We will discuss two synchronization mechanisms from the `sync` package today:
+
+- the `WaitGroup`
+- the `Mutex`
+
+From the `godocs`:
+
+.code code/waitgroups/sync_documentation.go /START OMIT/,/END OMIT/
+
+.link https://golang.org/pkg/sync
+
+A further discussion of synchronization vs channels will take place in the second presentation/magic show, we are only interested in usage today.
+
+* Magic refresher - pointers & argument passing
+Before we go further into the perilous world of syncronization, let's recount one of the basic magic school lessons about pointers & argument passing:
+
+- A *pointer* is a memory address to a variable. The `iptr:=&i` syntax gives the memory address of `i`, i.e. a pointer to `i` is assigned to variable `iptr`
+- The `*iptr` syntax *dereferences* the pointer from its memory address to the current value at that address
+- Arguments to functions are passed by copy in Go. Any changes we make to the copy will be lost, as the copy is destroyed by the garbage collector once the function exits
+- Passing pointers to functions allow us to make permanent changes to variables
+- Pointers themselves are passed by copy, so reassigning the pointer to a different variable address will not be a persist outside the scope of the function
+
+* The Rabbit Hat-trick
+
+.play code/waitgroups/pointers_argument_passing.go  /START OMIT/,/END OMIT/
+
+* A successful classic hat trick!
+As we saw in the hat trick, assigning the rabbit to the hat only succeeds once we passed a pointer to the hat. Otherwise, the rabbit is put inside a copy of the hat, which only lives inside function scope, and the trick fails!
+
+.image https://media.giphy.com/media/MFlhfP81IpKgaN50fq/giphy.gif _ 400
+
+* The Bullet Catch
+In this trick, timing is everything! The assistant fires a gun at the magician and he *magically* catches the bullet. He then reveals the caught bullet and takes a bow.
+
+.play code/waitgroups/failed/wg_magic_show_failed.go  /START OMIT/,/END OMIT/
+
+* Another failed trick!
+The magician made the career ending mistake of revealing the bullet before the gun was fired. What a disaster!
+
+Remember that the Go runtime is the one that decides the order in which Goroutines execute. Even though we start the `assistant` goroutine before the `magician` goroutine, they can be executed in any order.
+The Go runtime is the boss of the goroutines, not us!
+
+.image https://media.giphy.com/media/li0dswKqIZNpm/giphy.gif _ 400
+
 * The WaitGroup
-We can use `sync.WaitGroup` to ensure that the main goroutine waits for other goroutines to finish. This will remove that wasteful sleep and guarantee that we always wait for magic tricks to end.
+We can use `sync.WaitGroup` to ensure that goroutines wait for each other to finish.
 
 The `sync.WaitGroup`:
 
@@ -162,9 +209,49 @@ aka "Mistakes Adelina's already done many times"
 - Make sure you pass a pointer to the `WaitGroup` to your Goroutines using `&wg`. Otherwise, a copy will be passed to the function and you will not release anything to the original `main` blocking `WaitGroup`
 - Remember that you can `Add(n)` any integer amount, but `Done()` only decreases the counter by 1 and we will not release the `Wait` until the counter reaches 0
 
+* The Infinite Hat Trick - the hat
+Let's try the hat trick again with multiple items. Multiple performers will place items in a magically infinite hat!
+
+.code code/mutex/infinite_hat.go /START OMIT/,/END OMIT/
+
+* The Infinite Hat Trick - the trick
+
+.play code/mutex/failed/mutex_magic_show.go /START OMIT/,/END OMIT/
+
+* Oh no! The hat is missing items!
+Each goroutine arriving to place items in the hat overwrote each other's items and some items were lost. Now, that's some unintentional magic!
+
+.image https://media.giphy.com/media/z1bMHX8k9Z3yg/giphy.gif _ 350
+
+* The Mutex
+When a program runs concurrently, the parts of code which modify shared resources should not be accessed by multiple Goroutines at the same time.
+In our case, the performers were modifying the hat contents, which was the share resource. This was the *critical* section of the hat trick.
+
+The `sync.Mutex` is used to provide a locking mechanism:
+
+- The `sync.Mutex` has 2 methods: `Lock` and `Unlock`
+- Any code that is present between a call to `Lock` and `Unlock` will be executed by only one Goroutine. This prevents intermittent bugs and inconsistent results
+- If one Goroutine already holds the lock and if a new Goroutine is trying to acquire a lock, the new Goroutine will be blocked until the mutex is unlocked
+- Mutexes are used to make *threadsafe* structs
+
+* The Mutex Infinite Hat Trick - the hat
+We will make our infinite hat thread safe with a mutex so only one performer can place items in it at a time.
+
+.code code/mutex/mutex_infinite_hat.go /START OMIT/,/END OMIT/
+
+* The Mutex Infinite Hat Trick - the trick
+
+.play code/mutex/success/mutex_magic_show.go /START OMIT/,/END OMIT/
+
+* Oh woah! Maybe that hat really is infinite!
+The mutex made sure that each goroutine gained control of the hat and then placed the item in it. The goroutines are no longer able to overwrite/remove each other's items.
+
+.image https://media.giphy.com/media/2Fazg4XrLLmoGqwMg/giphy.gif _ 500
+
 * Channels
-We saw how we could put on a great magic show with the `sync.WaitGroup`, what if the performers needed to work together?
-In Golang, *channels* have come to our rescue. Channels can be thought as *pipes* through which Goroutines communicate.
+We saw how we could put on a great magic show with the `sync.WaitGroup` and `sync.Mutex`, but channels provide a more elegant way for goroutines to communicate and synchronize at the same time.
+
+*Channels* can be thought of as *pipes* through which Goroutines communicate.
 
 - Each channel has a type it is allowed to transport associated with it.
 - `chan` `T` is a channel of type `T`. No other type than `T` is allowed to be transported using the channel.
@@ -188,8 +275,8 @@ And now... it's time for another performance!
 .play code/channels/channel_quick_change.go /START OMIT/,/END OMIT/
 
 * Another successful magic trick!
-The magician takes a bow. We have used a channel to get the `main` goroutine to wait for the magician to finish the Quick Change.
-We have replaced the `sync.WaitGroup` with a channel.
+We have used a channel to get the `main` goroutine to wait for the magician to finish the Quick Change. We have replaced the `sync.WaitGroup` with a channel.
+
 This is possible due to the behaviour of channels. Let's examine this in more detail.
 
 .image https://media.giphy.com/media/S98HinM7FizN29m97L/giphy.gif _ 500
@@ -199,6 +286,85 @@ The reason why we could replace the `sync.WaitGroup` with a channel  is because 
 This meant that the `main` goroutine blocked until the `quickChange` sent the value on the channel after the trick!
 
 .image channel_behaviour.png _ 950
+
+* Channels under the hood
+We can think of each channel consisting of three FIFO (first in, first out) queues:
+
+- the *receiving* goroutine queue: goroutines in this queue are all in blocking state and waiting to receive values from that channel
+- the *sending* goroutine queue: goroutines in this queue are all in blocking state and waiting to send values to that channel
+- the *value* queue: holds anywhere between 0 and buffer size amount of values (more on buffers in next session)
+
+Each channel internally holds a mutex lock which is used to avoid data races in all kinds of operations.
+
+* Behaviour of channels - continued
+
+Receiving from a closed channel? Easy, send the zero value of that type
+Sending to a closed channel? Panic as we don't to add the goroutine to the sending queue and block it when we know other values are not going to come
+A value when there is a goroutine waiting for one? Dequeue that goroutine and give it that value
+
+.image channel_behaviour.png _ 950
+
+* Magic show curtain drop
+Woah! What a great show! We hope you all enjoyed yourselves!
+
+Our magicians have shown you the following magic tricks:
+
+- *Mentalist* trick: doing basic work with goroutines and waiting for them to complete with sleep
+- *Infinite* *Hat* trick: ensure goroutines acquire orderly control of shared resources
+- *Bullet* *Catch* trick: guarantee goroutine execution completion and order using the `sync.WaitGroup`
+- *Quick* *Change* trick: signalling work is completed using channels instead of `sync.WaitGroup` and exploring the blocking behaviour of channel sends/receives
+
+* Useful links - goroutines
+A complete journey with goroutines
+
+.link https://medium.com/@riteeksrivastava/a-complete-journey-with-goroutines-8472630c7f5c
+
+Concurrency and parallelism in Golang
+
+.link https://medium.com/@tilaklodha/concurrency-and-parallelism-in-golang-5333e9a4ba64
+
+Rob Pike's excellent talk on the Go blog
+
+.link https://blog.golang.org/waza-talk
+
+Golangbot - goroutines
+
+.link https://golangbot.com/goroutines/
+
+
+* Useful links - channels
+
+Golangbot - mutexes
+
+.link https://golangbot.com/mutex/
+
+Golangbot - channels
+
+.link https://golangbot.com/channels/
+
+Channels in Go
+
+.link https://go101.org/article/channel.html
+
+* See you next week!
+
+.image https://media.giphy.com/media/7yojoQtevjOCI/giphy.gif _ 550
+
+* Apprentice to Illusionist: concurrency patterns in Go
+.image https://media.giphy.com/media/XKjcTrzElUjsaeQ1eg/giphy.gif _ 600
+
+* Agenda - Magic show II
+In the next 45-60min we will cover:
+
+- Closing channels and the for range
+- The `select` keyword
+- Signalling to Goroutines that work is finished
+- Buffered channels and worker pools
+- Pipelines
+- Sample problems & examples
+- Making thread safe data structures
+- The Go race detector
+- Debugger caveats
 
 * Closing channels and the for range
 Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel.
@@ -221,83 +387,6 @@ A separate channel was used to ensure that the goroutine finished its work befor
 Closing the channel will make it immediately return the zero value, unblocking `main`
 
 .image https://media.giphy.com/media/Ok2oKUe5Mnq3m60vFJ/giphy.gif _ 350
-
-* Channels under the hood
-We can think of each channel consisting of three FIFO (first in, first out) queues:
-
-- the *receiving* goroutine queue: goroutines in this queue are all in blocking state and waiting to receive values from that channel
-- the *sending* goroutine queue: goroutines in this queue are all in blocking state and waiting to send values to that channel
-- the *value* queue: holds anywhere between 0 and buffer size amount of values (more on buffers in next session)
-
-Each channel internally holds a mutex lock which is used to avoid data races in all kinds of operations.
-
-* Behaviour of channels - revisited
-
-Receiving from a closed channel? Easy, send the zero value of that type
-Sending to a closed channel? Panic as we don't to add the goroutine to the sending queue and block it when we know other values are not going to come
-A value when there is a goroutine waiting for one? Dequeue that goroutine and give it that value
-
-.image channel_behaviour.png _ 950
-
-* Magic show curtain drop
-Woah! What a great show! We hope you all enjoyed yourselves!
-
-Our magicians have shown you the following magic tricks:
-
-- *Mentalist* trick: doing basic work with goroutines and waiting for them to complete with sleep
-- *Bullet* *Catch* trick: guarantee goroutine execution completion and order using the `sync.WaitGroup`
-- *Quick* *Change* trick: signalling work is completed using channels instead of `sync.WaitGroup` and exploring the blocking behaviour of channel sends/receives
-- *Card* *Shuffle* trick: receiving values using the for range as well as closing channels to show work has completed
-
-* Useful links - goroutines
-A complete journey with goroutines
-
-.link https://medium.com/@riteeksrivastava/a-complete-journey-with-goroutines-8472630c7f5c
-
-Concurrency and parallelism in Golang
-
-.link https://medium.com/@tilaklodha/concurrency-and-parallelism-in-golang-5333e9a4ba64
-
-Rob Pike's excellent talk on the Go blog
-
-.link https://blog.golang.org/waza-talk
-
-Golangbot - goroutines
-
-.link https://golangbot.com/goroutines/
-
-* Useful links - channels
-
-Golangbot - channels
-
-.link https://golangbot.com/channels/
-
-Channels in Go
-
-.link https://go101.org/article/channel.html
-
-Go by example - range over channels
-
-.link https://gobyexample.com/range-over-channels
-
-* See you next week!
-
-.image https://media.giphy.com/media/7yojoQtevjOCI/giphy.gif _ 550
-
-* Apprentice to Illusionist: concurrency patterns in Go
-.image https://media.giphy.com/media/XKjcTrzElUjsaeQ1eg/giphy.gif _ 600
-
-* Agenda - Magic show II
-In the next 45-60min we will cover:
-
-- The `select` keyword
-- Signalling to Goroutines that work is finished
-- Buffered channels and worker pools
-- Pipelines
-- Sample problems & examples
-- Making thread safe data structures
-- The Go race detector
-- Debugger caveats
 
 * The select keyword
 

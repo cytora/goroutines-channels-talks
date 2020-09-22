@@ -10,6 +10,7 @@ func readMinds() {
 	time.Sleep(500 * time.Millisecond)
 	fmt.Println("You chose the Queen of Hearts!")
 }
+
 func main() {
 	fmt.Println("The magic show has started!")
 	time.Sleep(1 * time.Second)
