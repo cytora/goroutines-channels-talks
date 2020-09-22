@@ -44,6 +44,7 @@ In the next 45-60min we will cover:
 - Goroutines basics
 - The Mutex & the WaitGroup
 - Channels basics
+- Channels under the hood
 
 * Concurrency vs parallelism
 Everyone knows that `Go` is designed for concurrency, but what is *concurrency*?
@@ -68,11 +69,12 @@ The magician shuffles the card deck and steals a card using *concurrency*. We ar
 .image https://media.giphy.com/media/UV4liSdOaKdw3V9HGI/giphy.gif _ 350
 
 * What is a Goroutine?
--  In Go, concurrency is achieved by using Goroutines. Goroutines are functions or methods which can run concurrently with other methods and functions
+In Go, concurrency is achieved by using Goroutines. Goroutines are functions or methods which can run concurrently with other methods and functions
+
 - Goroutines are sometimes called _lightweight_ _threads_
 - Goroutines require *2kb* of memory, while threads require *1Mb* (~500x more)
 - Unlike threads, they are managed by the `Go` runtime not the OS
-- Unlike threads, they are *cooperatively* scheduled and they periodically yield control
+- Unlike threads, they are *cooperatively* scheduled by the Go runtime
 
 There are other differences between threads and goroutines, but this is outside the scope of our discussion/magic show today.
 
@@ -85,7 +87,6 @@ Common uses of goroutines are:
 - Pushing tracking events/logs in the background
 
 Most importantly, goroutines allow our programs to run more than one function.
-Goroutines are absolutely essential to performant production grade software.
 
 .image https://media.giphy.com/media/Nx85vtTY70T3W/giphy.gif _ 400
 
@@ -219,13 +220,13 @@ Let's try the hat trick again with multiple items. Multiple performers will plac
 .play code/mutex/failed/mutex_magic_show.go /START OMIT/,/END OMIT/
 
 * Oh no! The hat is missing items!
-Each goroutine arriving to place items in the hat overwrote each other's items and some items were lost. Now, that's some unintentional magic!
+Some goroutines arriving to place items in the hat overwrote other's work and some items were lost. Now, that's some unintentional magic!
 
 .image https://media.giphy.com/media/z1bMHX8k9Z3yg/giphy.gif _ 350
 
 * The Mutex
 When a program runs concurrently, the parts of code which modify shared resources should not be accessed by multiple Goroutines at the same time.
-In our case, the performers were modifying the hat contents, which was the share resource. This was the *critical* section of the hat trick.
+In our case, the performers were modifying the hat contents, which was the shared resource. This was the *critical* section of the hat trick.
 
 The `sync.Mutex` is used to provide a locking mechanism:
 
@@ -253,14 +254,14 @@ The mutex made sure that each goroutine gained control of the hat and then place
 .play code/waitgroups/wg_quick_change.go /START OMIT/,/END OMIT/
 
 * Channels
-While the Quick Change Tricks works with `sync.WaitGroup`, channels provide a more elegant way for goroutines to communicate and synchronize at the same time.
+While the Quick Change Trick works with `sync.WaitGroup`, channels provide a more elegant way for goroutines to communicate and synchronize at the same time.
 
 *Channels* can be thought of as *pipes* through which Goroutines communicate.
 
 - Each channel has a type it is allowed to transport associated with it.
 - `chan` `T` is a channel of type `T`. No other type than `T` is allowed to be transported using the channel.
 - The zero value of a channel is `nil`.
-- The channel has to be defined using `make` similar to maps and slices - `make(chan` `T)`
+- Channels are defined using `make` similar to maps and slices - `make(chan` `T)`.
 - Channels can be closed to signal that no other values will sent through the pipe - `close(a)`
 
 * Sending and receiving from channel
