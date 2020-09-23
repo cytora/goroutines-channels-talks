@@ -73,10 +73,11 @@ In Go, concurrency is achieved by using Goroutines. Goroutines are functions or 
 
 - Goroutines are sometimes called _lightweight_ _threads_
 - Goroutines require *2kb* of memory, while threads require *1Mb* (~500x more)
-- Unlike threads, they are managed by the `Go` runtime not the OS
-- Unlike threads, they are *cooperatively* scheduled by the Go runtime
+- Unlike threads, they are managed by the `Go` runtime not the OS, so they are faster
 
 There are other differences between threads and goroutines, but this is outside the scope of our discussion/magic show today.
+
+We will consider goroutines Go runtime managed lightweight threads.
 
 * Cool, but why should I care?
 
@@ -153,13 +154,14 @@ From the `godocs`:
 A further discussion of synchronization vs channels will take place in the second presentation/magic show, we are only interested in usage today.
 
 * Magic refresher - pointers & argument passing
-Before we go further into the perilous world of syncronization, let's recount one of the basic magic school lessons about pointers & argument passing:
+Let's recount one of the basic magic school lessons about pointers & argument passing:
 
 - A *pointer* is a memory address to a variable. The `iptr:=&i` syntax gives the memory address of `i`, i.e. a pointer to `i` is assigned to variable `iptr`
 - The `*iptr` syntax *dereferences* the pointer from its memory address to the current value at that address
 - Arguments to functions are passed by copy in Go. Any changes we make to the copy will be lost, as the copy is destroyed by the garbage collector once the function exits
 - Passing pointers to functions allow us to make permanent changes to variables
 - Pointers themselves are passed by copy, so reassigning the pointer to a different variable address will not be a persist outside the scope of the function
+- The rules of pointer apply to *method* *receivers* also, as they can be considered the first *implicit* argument of methods.
 
 * The Rabbit Hat-trick
 
@@ -167,8 +169,9 @@ Before we go further into the perilous world of syncronization, let's recount on
 
 * A successful classic hat trick!
 As we saw in the hat trick, assigning the rabbit to the hat only succeeds once we passed a pointer to the hat. Otherwise, the rabbit is put inside a copy of the hat, which only lives inside function scope, and the trick fails!
+The same rules were valid to with method receivers also, as we saw when we tried to replace the rabbit with flowers.
 
-.image https://media.giphy.com/media/MFlhfP81IpKgaN50fq/giphy.gif _ 400
+.image https://media.giphy.com/media/MFlhfP81IpKgaN50fq/giphy.gif _ 300
 
 * The Bullet Catch
 In this trick, timing is everything! The assistant fires a gun at the magician and he *magically* catches the bullet. He then reveals the caught bullet and takes a bow.
@@ -264,6 +267,15 @@ While the Quick Change Trick works with `sync.WaitGroup`, channels provide a mor
 - Channels are defined using `make` similar to maps and slices - `make(chan` `T)`.
 - Channels can be closed to signal that no other values will sent through the pipe - `close(a)`
 
+* Buffered channels
+Earlier we said that channels were created with `make(chan` `T)`. This syntax will create an *unbuffered* channel with capacity 0. Once a value is written to it, no other value can be written to the channel until a read takes place.
+
+It is possible to create a channel with a *buffer*. This allows us to send multiple values into the pipe without waiting for reads.
+
+*Buffered* *channels* can be created by passing an additional capacity parameter to the `make` function which specifies the size of the buffer. Buffered channels can hold multiple values, after which they are considered *full*.
+
+`make(chan` `T,` `capacity)`
+
 * Sending and receiving from channel
 The syntax to *receive* from a channel `a` is `data` `:=` `<-` `a`.
 The arrow points outwards from `a` and hence we are reading from channel `a` and storing the value to the variable `data`.
@@ -276,15 +288,15 @@ We can think of each channel consisting of three FIFO (first in, first out) queu
 
 - the *receiving* goroutine queue: goroutines in this queue are all in blocking state and waiting to receive values from that channel
 - the *sending* goroutine queue: goroutines in this queue are all in blocking state and waiting to send values to that channel
-- the *value* queue: holds anywhere between 0 and buffer size amount of values (more on buffers in next session)
+- the *value* queue: holds anywhere between 0 and buffer size amount of values
 
 Each channel internally holds a mutex lock which is used to avoid data races in all kinds of operations.
 
 * Behaviour of channels
-
+Sending to a full channel? Easy, wait in the sending goroutine queue until there is room in the pipe to put the value
+Receiving from an empty channel? Easy, wait in the receiving goroutine queue until there is a value in the pipe
 Receiving from a closed channel? Easy, send the zero value of that type
 Sending to a closed channel? Panic as we don't to add the goroutine to the sending queue and block it when we know other values are not going to come
-A value when there is a goroutine waiting for one? Dequeue that goroutine and give it that value
 
 .image channel_behaviour.png _ 950
 
@@ -295,7 +307,7 @@ A value when there is a goroutine waiting for one? Dequeue that goroutine and gi
 * Another successful magic trick!
 We have used a channel to get the `main` goroutine to wait for the magician to finish the Quick Change. We have replaced the `sync.WaitGroup` with a channel.
 
-This is possible due to the behaviour of channels. We will examine this in more detail in the next session/magic show.
+This is possible due to the behaviour of channels which we have presented today, but will examine further in the next magic show!
 
 .image https://media.giphy.com/media/S98HinM7FizN29m97L/giphy.gif _ 500
 
@@ -305,9 +317,9 @@ Woah! What a great show! We hope you all enjoyed yourselves!
 Our magicians have shown you the following magic tricks:
 
 - *Mentalist* trick: doing basic work with goroutines and waiting for them to complete with sleep
-- *Infinite* *Hat* trick: ensure goroutines acquire orderly control of shared resources
 - *Bullet* *Catch* trick: guarantee goroutine execution completion and order using the `sync.WaitGroup`
-- *Quick* *Change* trick: signalling work is completed using channels instead of `sync.WaitGroup` and exploring the blocking behaviour of channel sends/receives
+- *Infinite* *Hat* trick: ensure goroutines acquire orderly control of shared resources
+- *Quick* *Change* trick: signalling work is completed using channels instead of `sync.WaitGroup` and discussing the blocking behaviour of channel sends/receives
 
 * Useful links - goroutines
 A complete journey with goroutines
@@ -340,6 +352,10 @@ Golangbot - channels
 Channels in Go
 
 .link https://go101.org/article/channel.html
+
+Go by example - channel buffering
+
+.link https://gobyexample.com/channel-buffering
 
 * See you next week!
 
@@ -395,14 +411,3 @@ The `default` case in a `select` statement is executed when none of the other ca
 * The Select Cups & Balls trick
 
 .play code/channels/select_magic_trick.go /START OMIT/,/END OMIT/
-
-* Buffered channels
-Earlier we said that channels were created with `make(chan` `T)`.
-This syntax will create a channel or pipe with capacity 0.
-Due to the blocking property of channel reads and sends, a single value can be sent, then another one may not be sent until the original value is read.
-
-It is possible to create a channel with a *buffer*. This allows us to send multiple values down the pipe without waiting for each values to travel through.
-
-*Buffered* *channels* can be created by passing an additional capacity parameter to the `make` function which specifies the size of the buffer.
-
-`make(chan` `T,` `capacity)`
