@@ -47,7 +47,74 @@ In the next 45-60min we will cover:
 - Closing channels
 - The for range
 - The `select` keyword
-c- WaitGroups vs Channels
+- WaitGroups vs Channels
+
+* Magic refresher - pointer operators
+A *pointer* is a memory address to a variable.
+
+The `&` operator generates a pointer to its operand. If the operand is of type `T`, then the type of the pointer is `*T`.
+
+The `*` operator is used to  *dereference* the pointer from its memory address to the current value at that address.
+
+The zero value of pointers is `nil`.
+
+* Abracadabra!
+
+.play code-session2/pointer_basics.go /START OMIT/,/END OMIT/
+
+* Magic refresher - pointers & argument passing
+
+- Arguments to functions are passed by copy in Go. Any changes we make to the copy will be lost, as the copy is destroyed by the garbage collector once the function exits
+- Passing pointers to functions allow us to make permanent changes to variables
+- The rules of pointers apply to *method* *receivers* also, as they can be considered the first *implicit* argument of methods
+- Pointers themselves are passed by copy, so reassigning the pointer to a different variable address will not persist outside the scope of the function
+
+* The Rabbit Hat-trick - the hat
+
+.code code-session2/rabbit_hat.go  /START OMIT/,/END OMIT/
+
+* The Rabbit Hat-trick - the trick
+
+.play code-session2/failed/pointers_argument_passing.go  /START OMIT/,/END OMIT/
+
+* The rabbit has escaped the hat!
+The rabbit is put inside a copy of the hat, which only lives inside function scope.
+The rabbit is successfully placed inside the copy-hat, but the original hat remains empty.
+The same rules were valid to with method receivers and the flowers also elude the hat.
+
+.image https://media.giphy.com/media/fYfeQAOD8pSjN7M0jY/giphy.gif _ 500
+
+* The Pointer Rabbit Hat-trick - the hat
+Let's try the rabbit hat trick again by making use of pointers...
+
+.code code-session2/pointer_rabbit_hat.go  /START OMIT/,/END OMIT/
+
+* The Pointer Rabbit Hat-trick - the trick
+
+.play code-session2/success/pointers_argument_passing.go  /START OMIT/,/END OMIT/
+
+* Finally, the rabbit stays put inside the hat!
+
+Once we passed pointers to the hat, changes persisted outside of function scope!
+
+.image https://media.giphy.com/media/MFlhfP81IpKgaN50fq/giphy.gif _ 300
+
+* The Impossible Rabbit Hat Trick - the hat
+
+.code code-session2/impossible_rabbit_hat.go /START OMIT/,/END OMIT/
+
+* The Impossible Rabbit Hat Trick - the trick
+
+.play code-session2/failed/pointers_reassignment.go /START OMIT/,/END OMIT/
+
+* Not even Penn & Teller can do this one!
+The Impossible Rabbit Hat trick can never be performed. Pointers themselves are passed by value so the hat swap will never work!
+
+Now let's leave behind the world of pointers, rabbits and hats for a little while...
+
+.image https://media.giphy.com/media/O5LDFyEHkMhqg/giphy.gif _ 450
+
+* Channel sending and receiving
 
 * Closing channels and the for range
 Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel.
