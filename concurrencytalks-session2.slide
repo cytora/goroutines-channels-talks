@@ -1,0 +1,85 @@
+Goroutines & channels II
+Peeking behind the magic curtain
+30 Sep 2020
+
+Adelina Simion
+adelina.simion@cytora.com
+
+* Format of talks
+We have three talks/magic shows each 45-60mins.
+*Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go* (23/09/2020)
+introduces and covers the basics.
+*Apprentice* *to* *illusionist:* *advanced* *channels* *usage* (30/09/2020)
+discusses more complex channels operations and their usage.
+*Master* *illusionist:* *concurrency* *patterns* (07/10/2020)
+presents Go concurrency patterns and real world examples.
+
+.image https://media.giphy.com/media/21T9PmWttOb0EFrrwK/giphy.gif _ 450
+
+* Running slide deck locally
+These slides are built with `go` `present`.
+
+.link https://godoc.org/golang.org/x/tools/present
+
+As we have not made them public, you can only see them locally.
+To see them and run the code examples you must:
+
+- Have `Go` installed
+- Checkout the slides repository
+
+.link https://github.com/cytora/goroutines-channels-talks
+
+- Install present locally with `go` `get` `golang.org/x/tools/cmd/present`
+- Run `present` `-use_playground` from the terminal
+- View the slides at
+
+.link http://127.0.0.1:3999/concurrencytalks-session2.slide#1
+
+* Apprentice to Illusionist: advanced channels usage
+
+.image https://media.giphy.com/media/XKjcTrzElUjsaeQ1eg/giphy.gif _ 600
+
+* Agenda - Magic show II
+In the next 45-60min we will cover:
+
+- Recap of pointers
+- Recap of sending & receiving on channels
+- Closing channels
+- The for range
+- The `select` keyword
+c- WaitGroups vs Channels
+
+* Closing channels and the for range
+Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel.
+Receivers can use an additional variable while receiving data from the channel to check whether the channel has been closed.
+
+`v,` `ok` `:=` `<-ch`
+
+In the above statement `ok` is true if the value was received by a successful send operation to a channel.
+If `ok` is false it means that we are reading from a closed channel. The value read from a closed channel will be the zero value of the channel's type.
+A closed channel will *immediately* return when read from.
+
+The *for* *range* form of the for loop can be used to receive values from a channel until it is closed. Once the channel is closed, the loop automatically exits.
+
+* The for range Card Shuffle
+.play code-session1/channels/for_range_magic_trick.go /START OMIT/,/END OMIT/
+
+* What a great shuffle!
+A channel was used to communicated with the magician and tell him when to stop shuffling. The channel is closed when we are done picking card and the loop exits.
+A separate channel was used to ensure that the goroutine finished its work before exiting. `main` waits for a value from this separate channel before exiting.
+Closing the channel will make it immediately return the zero value, unblocking `main`
+
+.image https://media.giphy.com/media/Ok2oKUe5Mnq3m60vFJ/giphy.gif _ 350
+
+* The select keyword
+
+The `select` statement is used to choose from multiple send/receive channel operations.
+The `select` statement blocks until one of the send/receive operation is ready.
+If multiple operations are ready, one of them is chosen at random.
+The `default` case in a `select` statement is executed when none of the other case is ready. This is generally used to prevent the `select` statement from blocking.
+
+.code code-session1/channels/select_syntax.go /START OMIT/,/END OMIT/
+
+* The Select Cups & Balls trick
+
+.play code-session1/channels/select_magic_trick.go /START OMIT/,/END OMIT/

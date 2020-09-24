@@ -1,4 +1,4 @@
-Goroutines & channels
+Goroutines & channels I
 Peeking behind the magic curtain
 23 Sep 2020
 
@@ -6,11 +6,13 @@ Adelina Simion
 adelina.simion@cytora.com
 
 * Format of talks
-We have two talks/magic shows each 45-60mins.
+We have three talks/magic shows each 45-60mins.
 *Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go* (23/09/2020)
 introduces and covers the basics.
-*Apprentice* *to* *illusionist:* *concurrency* *patterns* (30/09/2020)
-takes these basics out for a spin and lets us explore them further.
+*Apprentice* *to* *Illusionist:* *advanced* *channels* *usage* (30/09/2020)
+discusses more complex channels operations and their usage.
+*Master* *Illusionist:* *concurrency* *patterns* (07/10/2020)
+presents Go concurrency patterns and real world examples.
 
 .image https://media.giphy.com/media/21T9PmWttOb0EFrrwK/giphy.gif _ 450
 
@@ -31,10 +33,12 @@ To see them and run the code examples you must:
 - Run `present` `-use_playground` from the terminal
 - View the slides at
 
-.link http://127.0.0.1:3999/concurrencytalks.slide#1
+.link http://127.0.0.1:3999/concurrencytalks-session1.slide#1
 
 * Easy magic tricks: concurrency basics in Go
+
 .image https://media.giphy.com/media/JOXzH8WcOgR8PLBqtm/giphy.gif _ 500
+
 * Agenda - Magic show I
 In the next 45-60min we will cover:
 
@@ -95,7 +99,7 @@ Most importantly, goroutines allow our programs to run more than one function.
 Prefix the function or method call with the keyword `go` and you will have a new Goroutine running concurrently with the main goroutine.
 Abracadabra! Let the magic tricks begin!
 
-.code code/goroutines/go_keyword.go /START OMIT/,/END OMIT/
+.code code-session1/goroutines/go_keyword.go /START OMIT/,/END OMIT/
 
 .image https://media.giphy.com/media/UDjF1zMreMld6/giphy.gif _ 400
 
@@ -104,7 +108,7 @@ Abracadabra! Let the magic tricks begin!
 
 Let's start the show - our magician will read our minds. Fingers crossed it will work!
 
-.play code/goroutines/first_routine.go /START OMIT/,/END OMIT/
+.play code-session1/goroutines/first_routine.go /START OMIT/,/END OMIT/
 
 * Oh no! The magician failed!
 
@@ -127,7 +131,7 @@ If the main goroutine terminates then the program will be terminated and no othe
 
 * Waiting for our goroutines - the Goroutine Mentalist trick reloaded!
 
-.play code/goroutines/first_routine_sleep.go  /START OMIT/,/END OMIT/
+.play code-session1/goroutines/first_routine_sleep.go  /START OMIT/,/END OMIT/
 
 * The magician did his trick!
 The magician takes a bow, he's done his trick, but there are some problems:
@@ -147,7 +151,7 @@ We will discuss two synchronization mechanisms from the `sync` package today:
 
 From the `godocs`:
 
-.code code/waitgroups/sync_documentation.go /START OMIT/,/END OMIT/
+.code code-session1/waitgroups/sync_documentation.go /START OMIT/,/END OMIT/
 
 .link https://golang.org/pkg/sync
 
@@ -165,7 +169,7 @@ Let's recount one of the basic magic school lessons about pointers & argument pa
 
 * The Rabbit Hat-trick
 
-.play code/waitgroups/pointers_argument_passing.go  /START OMIT/,/END OMIT/
+.play code-session1/waitgroups/pointers_argument_passing.go  /START OMIT/,/END OMIT/
 
 * A successful classic hat trick!
 As we saw in the hat trick, assigning the rabbit to the hat only succeeds once we passed a pointer to the hat. Otherwise, the rabbit is put inside a copy of the hat, which only lives inside function scope, and the trick fails!
@@ -176,7 +180,7 @@ The same rules were valid to with method receivers also, as we saw when we tried
 * The Bullet Catch
 In this trick, timing is everything! The assistant fires a gun at the magician and he *magically* catches the bullet. He then reveals the caught bullet and takes a bow.
 
-.play code/waitgroups/failed/wg_magic_show_failed.go  /START OMIT/,/END OMIT/
+.play code-session1/waitgroups/failed/wg_magic_show_failed.go  /START OMIT/,/END OMIT/
 
 * Another failed trick!
 The magician made the career ending mistake of revealing the bullet before the gun was fired. What a disaster!
@@ -198,7 +202,7 @@ The `sync.WaitGroup`:
 - `Wait()` blocks the current goroutine and it will be released when the counter is zero
 
 * The WaitGroup Bullet Catch
-.play code/waitgroups/wg_magic_show.go  /START OMIT/,/END OMIT/
+.play code-session1/waitgroups/wg_magic_show.go  /START OMIT/,/END OMIT/
 
 * Woah, the magician caught the bullet!
 The `sync.WaitGroup` guaranteed that the assistant fires before the magician catches the bullet AND that the main goroutine waited for the trick to end.
@@ -216,11 +220,11 @@ aka "Mistakes Adelina's already done many times"
 * The Infinite Hat Trick - the hat
 Let's try the hat trick again with multiple items. Multiple performers will place items in a magically infinite hat!
 
-.code code/mutex/infinite_hat.go /START OMIT/,/END OMIT/
+.code code-session1/mutex/infinite_hat.go /START OMIT/,/END OMIT/
 
 * The Infinite Hat Trick - the trick
 
-.play code/mutex/failed/mutex_magic_show.go /START OMIT/,/END OMIT/
+.play code-session1/mutex/failed/mutex_magic_show.go /START OMIT/,/END OMIT/
 
 * Oh no! The hat is missing items!
 Some goroutines arriving to place items in the hat overwrote other's work and some items were lost. Now, that's some unintentional magic!
@@ -241,11 +245,11 @@ The `sync.Mutex` is used to provide a locking mechanism:
 * The Mutex Infinite Hat Trick - the hat
 We will make our infinite hat thread safe with a mutex so only one performer can place items in it at a time.
 
-.code code/mutex/mutex_infinite_hat.go /START OMIT/,/END OMIT/
+.code code-session1/mutex/mutex_infinite_hat.go /START OMIT/,/END OMIT/
 
 * The Mutex Infinite Hat Trick - the trick
 
-.play code/mutex/success/mutex_magic_show.go /START OMIT/,/END OMIT/
+.play code-session1/mutex/success/mutex_magic_show.go /START OMIT/,/END OMIT/
 
 * Oh woah! Maybe that hat really is infinite!
 The mutex made sure that each goroutine gained control of the hat and then placed the item in it. The goroutines are no longer able to overwrite/remove each other's items.
@@ -254,7 +258,7 @@ The mutex made sure that each goroutine gained control of the hat and then place
 
 * The WaitGroup Quick Change Trick
 
-.play code/waitgroups/wg_quick_change.go /START OMIT/,/END OMIT/
+.play code-session1/waitgroups/wg_quick_change.go /START OMIT/,/END OMIT/
 
 * Channels
 While the Quick Change Trick works with `sync.WaitGroup`, channels provide a more elegant way for goroutines to communicate and synchronize at the same time.
@@ -302,7 +306,7 @@ Sending to a closed channel? Panic as we don't to add the goroutine to the sendi
 
 * The Channel Quick Change Trick
 
-.play code/channels/channel_quick_change.go /START OMIT/,/END OMIT/
+.play code-session1/channels/channel_quick_change.go /START OMIT/,/END OMIT/
 
 * Another successful magic trick!
 We have used a channel to get the `main` goroutine to wait for the magician to finish the Quick Change. We have replaced the `sync.WaitGroup` with a channel.
@@ -360,54 +364,3 @@ Go by example - channel buffering
 * See you next week!
 
 .image https://media.giphy.com/media/7yojoQtevjOCI/giphy.gif _ 550
-
-* Apprentice to Illusionist: concurrency patterns in Go
-.image https://media.giphy.com/media/XKjcTrzElUjsaeQ1eg/giphy.gif _ 600
-
-* Agenda - Magic show II
-In the next 45-60min we will cover:
-
-- Closing channels and the for range
-- The `select` keyword
-- Signalling to Goroutines that work is finished
-- Buffered channels and worker pools
-- Pipelines
-- Sample problems & examples
-- Making thread safe data structures
-- The Go race detector
-- Debugger caveats
-
-* Closing channels and the for range
-Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel.
-Receivers can use an additional variable while receiving data from the channel to check whether the channel has been closed.
-
-`v,` `ok` `:=` `<-ch`
-
-In the above statement `ok` is true if the value was received by a successful send operation to a channel.
-If `ok` is false it means that we are reading from a closed channel. The value read from a closed channel will be the zero value of the channel's type.
-A closed channel will *immediately* return when read from.
-
-The *for* *range* form of the for loop can be used to receive values from a channel until it is closed. Once the channel is closed, the loop automatically exits.
-
-* The for range Card Shuffle
-.play code/channels/for_range_magic_trick.go /START OMIT/,/END OMIT/
-
-* What a great shuffle!
-A channel was used to communicated with the magician and tell him when to stop shuffling. The channel is closed when we are done picking card and the loop exits.
-A separate channel was used to ensure that the goroutine finished its work before exiting. `main` waits for a value from this separate channel before exiting.
-Closing the channel will make it immediately return the zero value, unblocking `main`
-
-.image https://media.giphy.com/media/Ok2oKUe5Mnq3m60vFJ/giphy.gif _ 350
-
-* The select keyword
-
-The `select` statement is used to choose from multiple send/receive channel operations.
-The `select` statement blocks until one of the send/receive operation is ready.
-If multiple operations are ready, one of them is chosen at random.
-The `default` case in a `select` statement is executed when none of the other case is ready. This is generally used to prevent the `select` statement from blocking.
-
-.code code/channels/select_syntax.go /START OMIT/,/END OMIT/
-
-* The Select Cups & Balls trick
-
-.play code/channels/select_magic_trick.go /START OMIT/,/END OMIT/

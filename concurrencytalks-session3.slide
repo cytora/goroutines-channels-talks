@@ -1,0 +1,50 @@
+Goroutines & channels III
+Peeking behind the magic curtain
+07 Oct 2020
+
+Adelina Simion
+adelina.simion@cytora.com
+
+* Format of talks
+We have three talks/magic shows each 45-60mins.
+*Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go* (23/09/2020)
+introduces and covers the basics.
+*Apprentice* *to* *illusionist:* *advanced* *channels* *usage* (30/09/2020)
+discusses more complex channels operations and their usage.
+*Master* *illusionist:* *concurrency* *patterns* (07/10/2020)
+presents Go concurrency patterns and real world examples.
+
+.image https://media.giphy.com/media/21T9PmWttOb0EFrrwK/giphy.gif _ 450
+
+* Running slide deck locally
+These slides are built with `go` `present`.
+
+.link https://godoc.org/golang.org/x/tools/present
+
+As we have not made them public, you can only see them locally.
+To see them and run the code examples you must:
+
+- Have `Go` installed
+- Checkout the slides repository
+
+.link https://github.com/cytora/goroutines-channels-talks
+
+- Install present locally with `go` `get` `golang.org/x/tools/cmd/present`
+- Run `present` `-use_playground` from the terminal
+- View the slides at
+
+.link http://127.0.0.1:3999/concurrencytalks-session3.slide#1
+
+
+* Agenda - Magic show III
+
+* Agenda - Magic show II
+In the next 45-60min we will cover:
+
+- Recap of channels
+- Signalling to Goroutines that work is finished
+- Buffered channels and worker pools
+- Pipelines
+- The Go race detector
+- Debugger caveats
+- Real world examples
