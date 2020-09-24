@@ -64,10 +64,12 @@ The zero value of pointers is `nil`.
 
 * Magic refresher - pointers & argument passing
 
-- Arguments to functions are passed by copy in Go. Any changes we make to the copy will be lost, as the copy is destroyed by the garbage collector once the function exits
+- Arguments to functions are passed by value in Go. A copy of the argument is made inside function scope
+- Any changes we make to the copy will be lost, as the copy is destroyed by the garbage collector once the function exits
 - Passing pointers to functions allow us to make permanent changes to variables
 - The rules of pointers apply to *method* *receivers* also, as they can be considered the first *implicit* argument of methods
-- Pointers themselves are passed by copy, so reassigning the pointer to a different variable address will not persist outside the scope of the function
+- Pointers themselves are passed by value, so reassigning the pointer to a different variable address will not persist outside the scope of the function
+- Unless the object is large, passing by value is significantly cheaper/more peformant than passing by pointer as we don't have to chase memory allocations
 
 * The Rabbit Hat-trick - the hat
 
@@ -114,9 +116,15 @@ Now let's leave behind the world of pointers, rabbits and hats for a little whil
 
 .image https://media.giphy.com/media/O5LDFyEHkMhqg/giphy.gif _ 450
 
-* Channel sending and receiving
+* Recap - Channel basics
+As we learned in the last session:
 
-* Closing channels and the for range
+- *Unbuffered* channels are initialized with `make(chan` `T)`. *Buffered* channels are given a capacity `make(chan` `T,capacity)`
+- Channel sends are blocking until there is space in the channel to send the value ie until channel is not full
+- Channel receives are blocking until there is a value to be read from the channel
+- Channels can be used for synchonization as well as data communication due to the blocking nature of sends and receives
+
+* Closing channels
 Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel.
 Receivers can use an additional variable while receiving data from the channel to check whether the channel has been closed.
 
@@ -126,6 +134,7 @@ In the above statement `ok` is true if the value was received by a successful se
 If `ok` is false it means that we are reading from a closed channel. The value read from a closed channel will be the zero value of the channel's type.
 A closed channel will *immediately* return when read from.
 
+* Channels and the for range
 The *for* *range* form of the for loop can be used to receive values from a channel until it is closed. Once the channel is closed, the loop automatically exits.
 
 * The for range Card Shuffle
