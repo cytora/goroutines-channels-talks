@@ -56,7 +56,7 @@ The `&` operator generates a pointer to its operand. If the operand is of type `
 
 The `*` operator is used to  *dereference* the pointer from its memory address to the current value at that address.
 
-The zero value of pointers is `nil`.
+The zero value of pointers is `nil`. Attempting to dereference a `nil` pointer will cause a `panic` ... and not at the Disco!
 
 * Abracadabra!
 
@@ -69,7 +69,7 @@ The zero value of pointers is `nil`.
 - Passing pointers to functions allow us to make permanent changes to variables
 - The rules of pointers apply to *method* *receivers* also, as they can be considered the first *implicit* argument of methods
 - Pointers themselves are passed by value, so reassigning the pointer to a different variable address will not persist outside the scope of the function
-- Unless the object is large, passing by value is significantly cheaper/more peformant than passing by pointer as we don't have to chase memory allocations
+- Unless the object is large, passing by value is significantly cheaper/more performant than passing by pointer as we don't have to chase memory allocations
 
 * The Rabbit Hat-trick - the hat
 
@@ -82,7 +82,7 @@ The zero value of pointers is `nil`.
 * The rabbit has escaped the hat!
 The rabbit is put inside a copy of the hat, which only lives inside function scope.
 The rabbit is successfully placed inside the copy-hat, but the original hat remains empty.
-The same rules were valid to with method receivers and the flowers also elude the hat.
+The same rules were valid with method receivers and the flowers also elude the hat.
 
 .image https://media.giphy.com/media/fYfeQAOD8pSjN7M0jY/giphy.gif _ 500
 
@@ -110,19 +110,58 @@ Once we passed pointers to the hat, changes persisted outside of function scope!
 .play code-session2/failed/pointers_reassignment.go /START OMIT/,/END OMIT/
 
 * Not even Penn & Teller can do this one!
-The Impossible Rabbit Hat trick can never be performed. Pointers themselves are passed by value so the hat swap will never work!
-
-Now let's leave behind the world of pointers, rabbits and hats for a little while...
+The Impossible Rabbit Hat trick can never be performed unless we again pass a pointer to the pointer, but let's not go down that rabbit hole.
+Pointers themselves are passed by value so the hat swap will never work!
 
 .image https://media.giphy.com/media/O5LDFyEHkMhqg/giphy.gif _ 450
 
+* The WaitGroup Bullet Catch from Session I
+
+.play code-session2/success/wg_magic_show.go /START OMIT/,/END OMIT/
+
+* Just as majestic as the first time we saw it!
+The Waitgroup Bullet Catch makes use of the `sync.WaitGroup` to make sure that the assistant and magician goroutines execute in an order that makes sense ... and doesn't ruin the magician's reputation!
+
+However, the trick also depends on our friends the pointers.
+A pointer to the `sync.WaitGroup` is passed to each goroutine and we mentioned this was *very* important.
+
+Let see what happens without the pointers...
+
+* The WaitGroup Bullet Catch minus pointers
+
+.play code-session2/failed/wg_magic_show.go /START OMIT/,/END OMIT/
+
+* Woah, maybe pointers are the real magicians!
+Without the pointers, each goroutine invokes `Done()` on a copy - `WaitGroup` and the `main` goroutine is never released. The Go runtime sees this deadlock and triggers a panic to shut down the hanging program.
+
+Remember, always pass your locks by pointer. The same problem could be replicated with the `sync.Mutex` from the Infinite Hat example from session I.
+
+.image https://media.giphy.com/media/1itbWbkMaweuhH5f6C/giphy.gif _ 350
+
 * Recap - Channel basics
+Now let's leave behind the world of pointers, rabbits and hats for a little while and go back to our *channels*.
 As we learned in the last session:
 
 - *Unbuffered* channels are initialized with `make(chan` `T)`. *Buffered* channels are given a capacity `make(chan` `T,capacity)`
 - Channel sends are blocking until there is space in the channel to send the value ie until channel is not full
 - Channel receives are blocking until there is a value to be read from the channel
 - Channels can be used for synchonization as well as data communication due to the blocking nature of sends and receives
+
+* The Channel Teleporting coin - the coin performer
+
+.code code-session2/coin_performer.go /START OMIT/,/END OMIT/
+
+* The Channel Teleporting coin - the trick
+
+.play code-session2/success/channels_sends_receives.go /START OMIT/,/END OMIT/
+
+* How did that coin move so fast!
+The performers sent the coin between themselves very quickly.
+The buffered channel kept the coin at the end, even if the other magician finished and has taken his bow.
+
+The real trick is in the magic of the channels!
+
+.image https://media.giphy.com/media/h8D1M8clhWfBmK16wb/giphy.gif _ 550
 
 * Closing channels
 Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel.
@@ -156,6 +195,6 @@ The `default` case in a `select` statement is executed when none of the other ca
 
 .code code-session1/channels/select_syntax.go /START OMIT/,/END OMIT/
 
-* The Select Cups & Balls trick
+* The Select Sawing a Woman in Half Trick
 
-.play code-session1/channels/select_magic_trick.go /START OMIT/,/END OMIT/
+.play code-session2/success/channels_selects.go /START OMIT/,/END OMIT/

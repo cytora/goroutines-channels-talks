@@ -14,8 +14,8 @@ func swapHat(hat *ImpossibleRabbitHat) {
 	rabbitHat := ImpossibleRabbitHat{
 		contents: "rabbit",
 	}
-	fmt.Printf("New hat pointer is %p\n", &rabbitHat)
 	time.Sleep(2 * time.Second)
+	fmt.Printf("New hat pointer is %p\n", &rabbitHat)
 	fmt.Printf("New hat contains %s\n", rabbitHat.contents)
 	time.Sleep(2 * time.Second)
 
