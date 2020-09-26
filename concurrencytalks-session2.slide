@@ -221,6 +221,31 @@ The `default` case in a `select` statement is executed when none of the other ca
 .play code-session2/success/channels_selects.go /START OMIT/,/END OMIT/
 
 * WaitGroups vs Channels - the big showdown
+In session I, we used the `sync.Mutex` and `sync.WaitGroup` to communicate over shared memory. Getting this right can be cumbersome.
+
+Go encourages the use of channels to pass references to data between goroutines. Shared values passed on channels are, in fact, never actively shared by separate threads of execution. Data races cannot occur, by design.
+The Go team have coined a slogan to make this easier to remember:
+
+.code code-session2/go_slogan.go /START OMIT/,/END OMIT/
+
+This is also why the `sync` package had the disclaimer we saw last time.
+
+.code code-session1/waitgroups/sync_documentation.go /START OMIT/,/END OMIT/
+
+* When to sync and when to channel
+
+- *Channels* are best suited in cases like passing ownership of data, distributing units of work, and communicating async results.
+- *Mutexes* are best suited for caches, counters and holding state.
+- *WaitGroups* are best used to ensure that all goroutines terminate cleanly before cleaning up.
+- Another use for *WaitGroups* is for cyclic algorithms that involve a set of goroutines that all work independently for a while, then all wait on a barrier, before proceeding independently again.
+
+* But most importantly...
+
+Use whichever is most expressive and/or most simple. Channel communication, mutexes and wait-groups are complementary and can be combined.
+
+The magic tricks we've seen today, I hope, have showcased this :)
+
+.image https://media.giphy.com/media/iFsCkq1xk05l4DbgrY/giphy.gif _ 350
 
 * Magic show curtain drop
 Woah! What a great show! We hope you all enjoyed yourselves!
@@ -232,6 +257,20 @@ Our magicians have shown you the following magic tricks:
 - *Teleporting* *Coin* trick: synchronizing Goroutines using channel sends and receives
 - *Card* *Shuffle* trick: closing channels to signal work is ended
 - *Sawing* *a* *Woman* *in* *Half* trick: using the select to read from multiple channels
+
+* Useful links
+
+Go by example - Range over channels
+
+.link https://gobyexample.com/range-over-channels
+
+The Go blog - share memory by communicating
+
+.link https://blog.golang.org/codelab-share
+
+Effective Go - concurrency
+
+.link https://golang.org/doc/effective_go.html#concurrency
 
 * See you next week!
 
