@@ -165,19 +165,28 @@ The real trick is in the magic of the channels!
 
 * Closing channels
 Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel.
+A closed channel will *immediately* return the zero value of that type when read from.
 Receivers can use an additional variable while receiving data from the channel to check whether the channel has been closed.
 
 `v,` `ok` `:=` `<-ch`
 
-In the above statement `ok` is true if the value was received by a successful send operation to a channel.
-If `ok` is false it means that we are reading from a closed channel. The value read from a closed channel will be the zero value of the channel's type.
-A closed channel will *immediately* return when read from.
+In the above statement `ok` is true if the value was received by a successful send operation to a channel. If `ok` is false it means that we are reading from a closed channel.
+
+Sending to a closed channel will *panic*. This is to ensure that goroutines are not blocked waiting to send values to a closed channel.
+
+* The Channel Card Shuffle - the shuffle
+
+.code code-session2/channel_shuffle.go /START OMIT/,/END OMIT/
+
+* The Channel Card Shuffle - the trick
+
+.play code-session2/success/channel_close_magic_trick.go /START OMIT/,/END OMIT/
 
 * Channels and the for range
 The *for* *range* form of the for loop can be used to receive values from a channel until it is closed. Once the channel is closed, the loop automatically exits.
 
 * The for range Card Shuffle
-.play code-session1/channels/for_range_magic_trick.go /START OMIT/,/END OMIT/
+.play code-session2/success/for_range_magic_trick.go /START OMIT/,/END OMIT/
 
 * What a great shuffle!
 A channel was used to communicated with the magician and tell him when to stop shuffling. The channel is closed when we are done picking card and the loop exits.
