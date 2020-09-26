@@ -182,18 +182,26 @@ Sending to a closed channel will *panic*. This is to ensure that goroutines are 
 
 .play code-session2/success/channel_close_magic_trick.go /START OMIT/,/END OMIT/
 
-* Channels and the for range
-The *for* *range* form of the for loop can be used to receive values from a channel until it is closed. Once the channel is closed, the loop automatically exits.
-
-* The for range Card Shuffle
-.play code-session2/success/for_range_magic_trick.go /START OMIT/,/END OMIT/
-
 * What a great shuffle!
-A channel was used to communicated with the magician and tell him when to stop shuffling. The channel is closed when we are done picking card and the loop exits.
+A channel was used to communicated with the magician and tell him when to stop shuffling. The channel is closed when we are done picking card and the channel returns a `ok` false.
 A separate channel was used to ensure that the goroutine finished its work before exiting. `main` waits for a value from this separate channel before exiting.
-Closing the channel will make it immediately return the zero value, unblocking `main`
+Closing the channel will make it immediately return the zero value, unblocking `main`.
 
 .image https://media.giphy.com/media/Ok2oKUe5Mnq3m60vFJ/giphy.gif _ 350
+
+* Channels and the for range - the shuffle
+The *for* *range* form of the for loop can be used to receive values from a channel until it is closed. Once the channel is closed, the loop automatically exits.
+
+.code code-session2/for_range_shuffle.go /START OMIT/,/END OMIT/
+
+* The for range Card Shuffle - the trick
+
+.play code-session2/success/for_range_magic_trick.go /START OMIT/,/END OMIT/
+
+* Twin shuffles!
+We managed the same trick but the for range made the shuffle more code succint. A win all around!
+
+.image https://media.giphy.com/media/YpwwoFKZJrE4g/giphy.gif _ 450
 
 * The select keyword
 
@@ -204,6 +212,12 @@ The `default` case in a `select` statement is executed when none of the other ca
 
 .code code-session1/channels/select_syntax.go /START OMIT/,/END OMIT/
 
-* The Select Sawing a Woman in Half Trick
+* The Select Sawing a Woman in Half - the saw performer
+
+.play code-session2/saw_performer.go /START OMIT/,/END OMIT/
+
+* The Select Sawing a Woman in Half - the trick
 
 .play code-session2/success/channels_selects.go /START OMIT/,/END OMIT/
+
+* WaitGroups vs Channels - the big showdown
