@@ -221,3 +221,18 @@ The `default` case in a `select` statement is executed when none of the other ca
 .play code-session2/success/channels_selects.go /START OMIT/,/END OMIT/
 
 * WaitGroups vs Channels - the big showdown
+
+* Magic show curtain drop
+Woah! What a great show! We hope you all enjoyed yourselves!
+
+Our magicians have shown you the following magic tricks:
+
+- *Rabbit* *Hat* trick: exploring the behaviour of pointers
+- *Bullet* *Catch* trick: guarantee goroutine execution completion and order using the `sync.WaitGroup`
+- *Teleporting* *Coin* trick: synchronizing Goroutines using channel sends and receives
+- *Card* *Shuffle* trick: closing channels to signal work is ended
+- *Sawing* *a* *Woman* *in* *Half* trick: using the select to read from multiple channels
+
+* See you next week!
+
+.image https://media.giphy.com/media/7yojoQtevjOCI/giphy.gif _ 550
