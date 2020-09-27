@@ -9,7 +9,7 @@ adelina.simion@cytora.com
 We have three talks/magic shows each 45-60mins.
 *Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go* (23/09/2020)
 introduces and covers the basics.
-*Apprentice* *to* *illusionist:* *advanced* *channels* *usage* (30/09/2020)
+*Apprentice* *to* *Illusionist:* *channels* *deep* *dive* (30/09/2020)
 discusses more complex channels operations and their usage.
 *Master* *illusionist:* *concurrency* *patterns* (07/10/2020)
 presents Go concurrency patterns and real world examples.
@@ -35,7 +35,7 @@ To see them and run the code examples you must:
 
 .link http://127.0.0.1:3999/concurrencytalks-session2.slide#1
 
-* Apprentice to Illusionist: advanced channels usage
+* Apprentice to Illusionist: channels deep dive
 
 .image https://media.giphy.com/media/XKjcTrzElUjsaeQ1eg/giphy.gif _ 600
 
@@ -69,7 +69,7 @@ The zero value of pointers is `nil`. Attempting to dereference a `nil` pointer w
 - Passing pointers to functions allow us to make permanent changes to variables
 - The rules of pointers apply to *method* *receivers* also, as they can be considered the first *implicit* argument of methods
 - Pointers themselves are passed by value, so reassigning the pointer to a different variable address will not persist outside the scope of the function
-- Unless the object is large, passing by value is significantly cheaper/more performant than passing by pointer as we don't have to chase memory allocations
+- Unless the object is large, passing by value is significantly cheaper/more performant than passing by pointer as we don't have to chase memory allocations throughout the call stack
 
 * The Rabbit Hat-trick - the hat
 
@@ -143,7 +143,7 @@ Now let's leave behind the world of pointers, rabbits and hats for a little whil
 As we learned in the last session:
 
 - *Unbuffered* channels are initialized with `make(chan` `T)`. *Buffered* channels are given a capacity `make(chan` `T,capacity)`
-- Channel sends are blocking until there is space in the channel to send the value ie until channel is not full
+- Channel sends are blocking until there is space in the channel to send the value ie until channel is not full. Unbuffered channels have no capacity and therefore require both goroutines to be ready to make any exchange.
 - Channel receives are blocking until there is a value to be read from the channel
 - Channels can be used for synchonization as well as data communication due to the blocking nature of sends and receives
 
@@ -152,6 +152,16 @@ As we learned in the last session:
 .code code-session2/coin_performer.go /START OMIT/,/END OMIT/
 
 * The Channel Teleporting coin - the trick
+
+.play code-session2/failed/channels_sends_receives.go /START OMIT/,/END OMIT/
+
+* Another trick failure!
+Our goroutines have hit a deadlock!
+Remember that unbuffered channels need both sender and receiver to be present to make the exchange.
+The performer that first reaches their limit takes a bow and exits. The other performer then tries to send the coin to the coin channel, which then blocks forever as no one will ever try to read from the channel.
+
+.image https://media.giphy.com/media/3o7TKqnMdPFGtzD6zm/giphy.gif _ 350
+* The Buffered Channel Teleporting coin - the trick
 
 .play code-session2/success/channels_sends_receives.go /START OMIT/,/END OMIT/
 
@@ -162,6 +172,16 @@ The buffered channel kept the coin at the end, even if the other magician finish
 The real trick is in the magic of the channels!
 
 .image https://media.giphy.com/media/h8D1M8clhWfBmK16wb/giphy.gif _ 550
+
+* Hang on, why don't we pass pointers to channels?
+The eagle eyed in the audience will notice that we didn't pass pointers to channels during the Teleporting Coin trick. What was crucial for the `sync.WaitGroup`
+doesn't seem to matter for channels. What kind of *magic* is this?
+
+The `make` function creates *slices*, *maps*, and *channels* only.
+It returns an initialized (not zeroed) value of type `T` (not `*T`). The reason for the distinction is that these three types represent, under the covers, references to data structures that must be initialized before use.
+The resulting value of `make(chan` `T)` is a reference to an underlying channel data structure. The `sync.Mutex` and `sync.WaitGroup` are just plain `struct` so we must handle their pointers explicitly.
+
+Rest assured, the pointers are there working their magic with the channels!
 
 * Closing channels
 Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel.
@@ -274,6 +294,10 @@ The Go blog - share memory by communicating
 Effective Go - concurrency
 
 .link https://golang.org/doc/effective_go.html#concurrency
+
+Ardan Labs - the nature of channels in Go
+
+.link https://www.ardanlabs.com/blog/2014/02/the-nature-of-channels-in-go.html
 
 * See you next week!
 

@@ -31,16 +31,16 @@ func (c *CoinPerformer) perform(coin chan bool, done chan string) {
 //START OMIT
 func main() {
 	fmt.Println("The magic show has started!")
-	coin := make(chan bool,1) //create the coin synchronization channel
+	coin := make(chan bool) //create the coin synchronization channel
 	done := make(chan string) //create the done channel
 
 	time.Sleep(2 * time.Second)
 	fmt.Println("The teleportation trick is ready to begin!")
-	coin <- true // non blocking due to buffered channel
 	magician := CoinPerformer{name: "Magician", passes: 3}
 	assistant := CoinPerformer{name: "Assistant", passes: 3}
 	go magician.perform(coin, done)
 	go assistant.perform(coin, done)
+	coin <- true
 
 	// wait for the 2 performers to finish
 	for i := 0; i < 2; i++ {
@@ -52,3 +52,4 @@ func main() {
 	fmt.Println("The magic show has ended!")
 }
 //END OMIT
+

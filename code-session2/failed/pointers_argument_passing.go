@@ -24,15 +24,15 @@ func (hat RabbitHat) trickFlowers() {
 //START OMIT
 func main() {
 	hat := RabbitHat{contents: "nothing"} //the hat begins by being empty
-
 	fmt.Printf("The magic show has started!\nThe hat contains %s.\n", hat.contents)
-	time.Sleep(1 * time.Second)
 
+	time.Sleep(2 * time.Second)
 	fmt.Println("Placing a rabbit in the hat.")
 	hatTrickRabbit(hat) // try to place a rabbit in the hat
 	time.Sleep(2 * time.Second)
 	fmt.Printf("The hat contains %s after function.\n", hat.contents)
 
+	time.Sleep(2 * time.Second)
 	fmt.Println("Placing flowers in the hat.")
 	hat.trickFlowers()
 	time.Sleep(2 * time.Second)
