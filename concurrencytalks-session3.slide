@@ -11,7 +11,7 @@ We have three talks/magic shows each 45-60mins.
 introduces and covers the basics.
 *Apprentice* *to* *Illusionist:* *channels* *deep* *dive* (30/09/2020)
 discusses more complex channels operations, their usage and their limitations.
-*Master* *illusionist:* *concurrency* *patterns* (07/10/2020)
+*Master* *Illusionist:* *concurrency* *patterns* (07/10/2020)
 presents Go concurrency patterns and real world examples.
 
 .image https://media.giphy.com/media/21T9PmWttOb0EFrrwK/giphy.gif _ 450
@@ -35,10 +35,11 @@ To see them and run the code examples you must:
 
 .link http://127.0.0.1:3999/concurrencytalks-session3.slide#1
 
+* Master Illusionist: concurrency patterns
+
+.image https://media.giphy.com/media/3o6Zthq1yAc3Fdbsis/giphy.gif _ 600
 
 * Agenda - Magic show III
-
-* Agenda - Magic show II
 In the next 45-60min we will cover:
 
 - Recap of channels
