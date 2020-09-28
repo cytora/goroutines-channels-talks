@@ -9,9 +9,9 @@ adelina.simion@cytora.com
 We have three talks/magic shows each 45-60mins.
 *Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go* (23/09/2020)
 introduces and covers the basics.
-*Apprentice* *to* *Illusionist:* *advanced* *channels* *usage* (30/09/2020)
-discusses more complex channels operations and their usage.
-*Master* *Illusionist:* *concurrency* *patterns* (07/10/2020)
+*Apprentice* *to* *Illusionist:* *channels* *deep* *dive* (30/09/2020)
+discusses more complex channels operations, their usage and their limitations.
+*Master* *illusionist:* *concurrency* *patterns* (07/10/2020)
 presents Go concurrency patterns and real world examples.
 
 .image https://media.giphy.com/media/21T9PmWttOb0EFrrwK/giphy.gif _ 450
