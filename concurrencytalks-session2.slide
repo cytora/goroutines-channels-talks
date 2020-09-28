@@ -230,7 +230,7 @@ The `select` statement blocks until one of the send/receive operation is ready.
 If multiple operations are ready, one of them is chosen at random.
 The `default` case in a `select` statement is executed when none of the other case is ready. This is generally used to prevent the `select` statement from blocking.
 
-.code code-session1/channels/select_syntax.go /START OMIT/,/END OMIT/
+.code code-session2/select_syntax.go /START OMIT/,/END OMIT/
 
 * The Select Sawing a Woman in Half - the saw performer
 
@@ -238,7 +238,28 @@ The `default` case in a `select` statement is executed when none of the other ca
 
 * The Select Sawing a Woman in Half - the trick
 
+.play code-session2/failed/channels_selects.go /START OMIT/,/END OMIT/
+
+* Great trick, but let's pay attention to the bows...
+While technically the trick has succeeded, we can notice that the performers sometimes doesn't manage to take their bow. The `done` channel is closed to signal when they should stop sawing but after that the `main` resumes and shuts down.
+We can pass another channel to wait on or use the trusty `WaitGroup`. We will use the `WaitGroup` as it clearly conveys that we will not be reading information, but only synchronizing.
+
+.image https://media.giphy.com/media/3o6nUQapRZrXgdjVja/giphy.gif _ 500
+
+* The Select Sawing a Woman in Half - the WaitGroup saw performer
+
+.play code-session2/wg_saw_performer.go /START OMIT/,/END OMIT/
+
+* The Select Sawing a Woman in Half - the WaitGroup trick
+
 .play code-session2/success/channels_selects.go /START OMIT/,/END OMIT/
+
+* Woah! What a great trick!
+The Sawing a Woman in Half trick demonstrates to us how to use the `select` to read from several channels.
+We also used the `sync.WaitGroup` to make sure we wait for the the performers to take their bows gracefully.
+The bows are a great success now!
+
+.image https://media.giphy.com/media/xUA7aN1MTCZx97V1Ic/giphy.gif _ 500
 
 * WaitGroups vs Channels - the big showdown
 In session I, we used the `sync.Mutex` and `sync.WaitGroup` to communicate over shared memory. Getting this right can be cumbersome.
@@ -276,7 +297,7 @@ Our magicians have shown you the following magic tricks:
 - *Bullet* *Catch* trick: guarantee goroutine execution completion and order using the `sync.WaitGroup`
 - *Teleporting* *Coin* trick: synchronizing Goroutines using channel sends and receives
 - *Card* *Shuffle* trick: closing channels to signal work is ended
-- *Sawing* *a* *Woman* *in* *Half* trick: using the select to read from multiple channels
+- *Sawing* *a* *Woman* *in* *Half* trick: using the select to read from multiple channels together with the `sync.WaitGroup` to wait for goroutine completion
 
 * Useful links
 Go by example - pointers
