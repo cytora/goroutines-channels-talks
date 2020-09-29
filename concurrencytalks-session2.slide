@@ -64,9 +64,9 @@ The zero value of pointers is `nil`. Attempting to dereference a `nil` pointer w
 
 * Magic refresher - pointers & argument passing
 
-- Arguments to functions are passed by value in Go. A copy of the argument is made inside function scope
+- Arguments to functions are *passed* *by* *value* in Go. A copy of the argument is made which only lives inside function scope
 - Any changes we make to the copy will be lost, as the copy is destroyed by the garbage collector once the function exits
-- Passing pointers to functions allow us to make permanent changes to variables
+- Passing pointers to functions allow us arguments to be *passed* *by* *reference* and to make permanent changes to variables
 - The rules of pointers apply to *method* *receivers* also, as they can be considered the first *implicit* argument of methods
 - Pointers themselves are passed by value, so reassigning the pointer to a different variable address will not persist outside the scope of the function
 - Unless the object is large, passing by value is significantly cheaper/more performant than passing by pointer as we don't have to chase memory allocations throughout the call stack
@@ -101,21 +101,12 @@ Once we passed pointers to the hat, changes persisted outside of function scope!
 
 .image https://media.giphy.com/media/MFlhfP81IpKgaN50fq/giphy.gif _ 300
 
-* The Impossible Rabbit Hat Trick - the hat
 
-.code code-session2/impossible_rabbit_hat.go /START OMIT/,/END OMIT/
+* The WaitGroup Bullet Catch from Session I - the performers
 
-* The Impossible Rabbit Hat Trick - the trick
+.code code-session2/wg_pointer_performers.go /START OMIT/,/END OMIT/
 
-.play code-session2/failed/pointers_reassignment.go /START OMIT/,/END OMIT/
-
-* Not even Penn & Teller can do this one!
-The Impossible Rabbit Hat trick can never be performed unless we again pass a pointer to the pointer, but let's not go down that rabbit hole.
-Pointers themselves are passed by value so the hat swap will never work!
-
-.image https://media.giphy.com/media/O5LDFyEHkMhqg/giphy.gif _ 450
-
-* The WaitGroup Bullet Catch from Session I
+* The WaitGroup Bullet Catch from Session I - the trick
 
 .play code-session2/success/wg_magic_show.go /START OMIT/,/END OMIT/
 
@@ -127,7 +118,11 @@ A pointer to the `sync.WaitGroup` is passed to each goroutine and we mentioned t
 
 Let see what happens without the pointers...
 
-* The WaitGroup Bullet Catch minus pointers
+* The WaitGroup Bullet Catch from Session I - the pointless performers
+
+.code code-session2/wg_performers.go /START OMIT/,/END OMIT/
+
+* The WaitGroup Bullet Catch from Session I - the pointless trick
 
 .play code-session2/failed/wg_magic_show.go /START OMIT/,/END OMIT/
 
