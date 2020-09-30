@@ -42,7 +42,7 @@ func main() {
 	wg.Wait() //wait for the performers to take their bows
 
 	fmt.Println("The woman wiggles her toes! Wiggle Wiggle!")
-	time.Sleep(2 * time.Second)
+	time.Sleep(1500 * time.Millisecond)
 	fmt.Println("The magic show has ended!")
 }
 //END OMIT

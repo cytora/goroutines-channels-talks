@@ -37,7 +37,7 @@ func main() {
 	close(done) //tell the performers to stop sawing and take a bow
 
 	fmt.Println("The woman wiggles her toes! Wiggle Wiggle!")
-	time.Sleep(2 * time.Second)
+	time.Sleep(1500 * time.Millisecond)
 	fmt.Println("The magic show has ended!")
 }
 //END OMIT

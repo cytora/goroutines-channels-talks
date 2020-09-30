@@ -259,7 +259,9 @@ The bows are a great success now!
 * WaitGroups vs Channels - the big showdown
 In session I, we used the `sync.Mutex` and `sync.WaitGroup` to communicate over shared memory. Getting this right can be cumbersome.
 
-Go encourages the use of channels to pass references to data between goroutines. Shared values passed on channels are, in fact, never actively shared by separate threads of execution. Data races cannot occur, by design.
+Go encourages the use of channels to pass data between goroutines. Shared values passed on channels are, in fact, never actively shared by separate threads of execution. Data races cannot occur, by design.
+*CAUTION*: The protections against data races fall through when passing and mutating values through pointers. Channels are not silver bullet data race protectors.
+
 The Go team have coined a slogan to make this easier to remember:
 
 .code code-session2/go_slogan.go /START OMIT/,/END OMIT/
