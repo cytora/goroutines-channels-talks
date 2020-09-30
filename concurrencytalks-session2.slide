@@ -80,7 +80,7 @@ The zero value of pointers is `nil`. Attempting to dereference a `nil` pointer w
 .play code-session2/failed/pointers_argument_passing.go  /START OMIT/,/END OMIT/
 
 * The rabbit has escaped the hat!
-The rabbit is put inside a copy of the hat, which only lives inside function scope.
+The rabbit is put inside a copy of the hat living at a different address, which only lives inside function scope.
 The rabbit is successfully placed inside the copy-hat, but the original hat remains empty.
 The same rules were valid with method receivers and the flowers also elude the hat.
 
@@ -98,6 +98,7 @@ Let's try the rabbit hat trick again by making use of pointers...
 * Finally, the rabbit stays put inside the hat!
 
 Once we passed pointers to the hat, changes persisted outside of function scope!
+The hat we were modifying was the same as the original hat.
 
 .image https://media.giphy.com/media/MFlhfP81IpKgaN50fq/giphy.gif _ 300
 
