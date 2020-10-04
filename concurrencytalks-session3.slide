@@ -139,7 +139,13 @@ In each stage, the goroutines:
 Each stage has any number of inbound and outbound channels, except the first and last stages, which have only outbound or inbound channels, respectively.
 The first stage is sometimes called the *source* or *producer*; the last stage, the *sink* or *consumer*.
 
-* The pipeline jugglers
+* The Pipeline Straitjacket Escape - the performers
+
+.code code-session3/pipeline_performers.go /START OMIT/,/END OMIT/
+
+* The Pipeline Straitjacket Escape - the trick
+
+.play code-session3/success/pipeline_trick.go /START OMIT/,/END OMIT/
 
 * Fan out, Fan in
 Multiple functions can read from the same channel until that channel is closed; this is called *fan-out*. This provides a way to distribute work amongst a group of workers to parallelize CPU use and I/O.
@@ -162,14 +168,14 @@ The concealers fanned out by pushing items to the buffered channel, then the rev
 
 .image https://media.giphy.com/media/LpLd2NGvpaiys/giphy.gif _ 450
 
+* The Go race detector
+
+* Real life examples
+
 * Useful links
 Go by example: Channel directions
 
 .link https://gobyexample.com/channel-directions
-
-Futures/Promises in Golang
-
-.link https://medium.com/strava-engineering/futures-promises-in-the-land-of-golang-1453f4807945
 
 Starting and stopping things with a signal channel
 
