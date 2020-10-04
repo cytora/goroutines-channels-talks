@@ -44,9 +44,9 @@ In the next 45-60min we will cover:
 
 - Recap of channels
 - Signalling to Goroutines that work is finished
-- Pipelines
 - Futures
-- Fan-in, Fan-out
+- Pipelines
+- Fan-out, Fan-in
 - The Go race detector
 - Real world examples
 
@@ -79,6 +79,19 @@ Receivers can use an additional variable while receiving data from the channel t
 `v,` `ok` `:=` `<-ch`
 
 The `for` `range` exits and stops receiving values once the channel is closed.
+
+* Unidirectional channels
+When using channels as function parameters, you can specify if a channel is meant to only send or receive values.
+This specificity increases the type-safety of the program. A compile error will be raised when attempting an unsupported operation.
+
+By default a channel is bidirectional, but we can create a unidirectional channel also.
+We are allowed to convert a bidirectional channel into the unidirectional channel, or in other words, you can convert a bidirectional channel into a receive-only or send-only channel, but vice versa is not possible.
+
+.image https://media.giphy.com/media/xUPJPtOPpj7konQPZu/giphy.gif _ 350
+
+* Passing unidirectional channels to functions
+
+.play code-session3/unidirectional_channel_syntax.go /START OMIT/,/END OMIT/
 
 * The Channel Card Shuffle - the shuffle
 
@@ -118,9 +131,46 @@ Closing the signal channel allows us to tell the magician to stop sending cards 
 
 .image https://media.giphy.com/media/1AfMNaccBB9uI6Uq6G/giphy.gif _ 450
 
+* Futures
+
 * Pipelines
+A *pipeline* is a series of stages connected by channels, where each stage is a group of goroutines running the same function.
+
+In each stage, the goroutines:
+- receive values from upstream via inbound channels
+- perform some function on that data, usually producing new values
+- send values downstream via outbound channels
+
+Each stage has any number of inbound and outbound channels, except the first and last stages, which have only outbound or inbound channels, respectively.
+The first stage is sometimes called the *source* or *producer*; the last stage, the *sink* or *consumer*.
+
+* The pipeline jugglers
+
+* Fan out, Fan in
+Multiple functions can read from the same channel until that channel is closed; this is called *fan-out*. This provides a way to distribute work amongst a group of workers to parallelize CPU use and I/O.
+
+A function can read from multiple inputs and proceed until all are closed by multiplexing the input channels onto a single channel that's closed when all the inputs are closed. This is called *fan-in*.
+
+.image https://media.giphy.com/media/D0WOL0ogZIoG4/giphy.gif _ 350
+
+* The Fan Out Infinite Hat - the performers
+
+.code code-session3/pipeline_infinite_hat.go /START OMIT/,/END OMIT/
+
+* The Fan Out Infinite Hat - the trick
+
+.play code-session3/success/pipeline_infinite_hat.go /START OMIT/,/END OMIT/
+
+* The hat is a lie!
+We have modelled the infinite hat trick without even representing a hat!
+The concealers fanned out by pushing items to the buffered channel, then the revealer fanned in by reading all the items.
+
+.image https://media.giphy.com/media/LpLd2NGvpaiys/giphy.gif _ 450
 
 * Useful links
+Go by example: Channel directions
+
+.link https://gobyexample.com/channel-directions
 Starting and stopping things with a signal channel
 
 .link https://medium.com/@matryer/golang-advent-calendar-day-two-starting-and-stopping-things-with-a-signal-channel-f5048161018

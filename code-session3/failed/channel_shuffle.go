@@ -7,7 +7,7 @@ import (
 )
 
 var tops = []string {"queen of hearts", "four of clubs", "jack of spades", "ace of diamonds"}
-func channelShuffle(cardPicks chan string, wg *sync.WaitGroup) {
+func channelShuffle(cardPicks chan<- string, wg *sync.WaitGroup) {
 	defer wg.Done()
 	fmt.Println("The magician starts shuffling the cards.")
 	time.Sleep(1 * time.Second)
