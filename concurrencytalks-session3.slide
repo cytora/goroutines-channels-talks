@@ -44,8 +44,92 @@ In the next 45-60min we will cover:
 
 - Recap of channels
 - Signalling to Goroutines that work is finished
-- Buffered channels and worker pools
 - Pipelines
+- Futures
+- Fan-in, Fan-out
 - The Go race detector
-- Debugger caveats
 - Real world examples
+
+* Recap - channels & synchronization
+In the past 2 weeks, we've gone on an epic journey with Goroutines and channels.
+The key takeaways have been:
+
+- *Goroutines* are *lightweight* threads that allow our programs to do more than 1 task. This allows us to use resources optimally
+- *Channels* are like pipes that we can send resources/information through. *Sends* and *receives* are blocking.
+- Goroutines communicate via channels, which allow us to send information and avoid data races
+- The `sync` package contains the `Mutex` and `WaitGroup`. These are locks that can be used for resource locking and goroutine synchronization
+- Channels should be used for resource sharing, while locks can be used for synchronization when no other information is shared
+
+* Concurrency Patterns
+Now that we understand the basics of Goroutines, channels and synchronization, let's have a look at some common problems and patterns.
+We will have a look at the following patterns:
+
+- Signalling that work is finished
+- Pipelines: processing data in a series of stages connected by channels, where each stage is a group of goroutines running the same function
+- Futures: a value arriving at a future time
+- Fan-in, Fan-out: Multiplexing and Demultiplexing
+
+* Closing channels when work is done
+In session 2, we discussed closing channels to signal that no more values are going to be sent through.
+
+A closed channel will *immediately* return the zero value of that type when read from.
+Sending to a closed channel *panics*.
+Receivers can use an additional variable while receiving data from the channel to check whether the channel has been closed.
+
+`v,` `ok` `:=` `<-ch`
+
+The `for` `range` exits and stops receiving values once the channel is closed.
+
+* The Channel Card Shuffle - the shuffle
+
+.code code-session3/channel_shuffle.go /START OMIT/,/END OMIT/
+
+* The Channel Card Shuffle - the trick
+
+.play code-session3/failed/channel_shuffle.go /START OMIT/,/END OMIT/
+
+* Oh noes! The shuffle has exploded!
+Closing the cards channel to signal we no longer wish to receive cards has backfired.
+Sends on closed channels panic and this has caused our shuffle to go awry.
+
+.image https://media.giphy.com/media/3orif5bwPOWLelQoc8/giphy.gif _ 450
+
+* Signalling to Goroutines that work is finished
+This is a common problem out in the wild.
+A solution is to use a signal channel. This is a channel whose sole purpose is to signal, not transfer information.
+
+`signal:=` `make(chan` `struct{})`
+
+Closing the channel, will unblock it, allowing execution to continue.
+The goroutine that is sending to the channel should be the one to close the channel, but we can close an *additional* channel to tell the goroutine to stop.
+This will avoid the panic we saw in the channel shuffle.
+We can use the `select` we saw last time to listen to the signal channel
+
+* The Signal Channel Card Shuffle - the shuffle
+
+.code code-session3/channel_signal_shuffle.go /START OMIT/,/END OMIT/
+
+* The Signal Channel Card Shuffle - the trick
+
+.play code-session3/success/channel_shuffle.go /START OMIT/,/END OMIT/
+
+* What a great shuffle!
+Closing the signal channel allows us to tell the magician to stop sending cards without causing a panic. Hurray!
+
+.image https://media.giphy.com/media/1AfMNaccBB9uI6Uq6G/giphy.gif _ 450
+
+* Pipelines
+
+* Useful links
+Starting and stopping things with a signal channel
+
+.link https://medium.com/@matryer/golang-advent-calendar-day-two-starting-and-stopping-things-with-a-signal-channel-f5048161018
+
+Go Concurrency Patterns: Pipelines and cancellation
+
+.link https://blog.golang.org/pipelines
+
+* This concludes our epic journey!
+Thank you to all my colleagues at Cytora for listening and supporting me during this Goroutines & Channels 3 talk series.
+
+.image gophermicdrop.png _ 400
