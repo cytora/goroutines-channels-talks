@@ -44,7 +44,6 @@ In the next 45-60min we will cover:
 
 - Recap of channels
 - Signalling to Goroutines that work is finished
-- Futures
 - Pipelines
 - Fan-out, Fan-in
 - The Go race detector
@@ -58,7 +57,7 @@ The key takeaways have been:
 - *Channels* are like pipes that we can send resources/information through. *Sends* and *receives* are blocking.
 - Goroutines communicate via channels, which allow us to send information and avoid data races
 - The `sync` package contains the `Mutex` and `WaitGroup`. These are locks that can be used for resource locking and goroutine synchronization
-- Channels should be used for resource sharing, while locks can be used for synchronization when no other information is shared
+- Channels *should* be used for resource sharing, while locks can be used for synchronization when no other information is shared
 
 * Concurrency Patterns
 Now that we understand the basics of Goroutines, channels and synchronization, let's have a look at some common problems and patterns.
@@ -66,10 +65,9 @@ We will have a look at the following patterns:
 
 - Signalling that work is finished
 - Pipelines: processing data in a series of stages connected by channels, where each stage is a group of goroutines running the same function
-- Futures: a value arriving at a future time
-- Fan-in, Fan-out: Multiplexing and Demultiplexing
+- Fan-out, Fan-in: Multiplexing and Demultiplexing to optimise resource usage
 
-* Closing channels when work is done
+* Recap - Closing channels
 In session 2, we discussed closing channels to signal that no more values are going to be sent through.
 
 A closed channel will *immediately* return the zero value of that type when read from.
@@ -113,7 +111,6 @@ A solution is to use a signal channel. This is a channel whose sole purpose is t
 
 `signal:=` `make(chan` `struct{})`
 
-Closing the channel, will unblock it, allowing execution to continue.
 The goroutine that is sending to the channel should be the one to close the channel, but we can close an *additional* channel to tell the goroutine to stop.
 This will avoid the panic we saw in the channel shuffle.
 We can use the `select` we saw last time to listen to the signal channel
@@ -130,8 +127,6 @@ We can use the `select` we saw last time to listen to the signal channel
 Closing the signal channel allows us to tell the magician to stop sending cards without causing a panic. Hurray!
 
 .image https://media.giphy.com/media/1AfMNaccBB9uI6Uq6G/giphy.gif _ 450
-
-* Futures
 
 * Pipelines
 A *pipeline* is a series of stages connected by channels, where each stage is a group of goroutines running the same function.
@@ -171,6 +166,11 @@ The concealers fanned out by pushing items to the buffered channel, then the rev
 Go by example: Channel directions
 
 .link https://gobyexample.com/channel-directions
+
+Futures/Promises in Golang
+
+.link https://medium.com/strava-engineering/futures-promises-in-the-land-of-golang-1453f4807945
+
 Starting and stopping things with a signal channel
 
 .link https://medium.com/@matryer/golang-advent-calendar-day-two-starting-and-stopping-things-with-a-signal-channel-f5048161018
