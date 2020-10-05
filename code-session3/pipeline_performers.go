@@ -6,7 +6,6 @@ import (
 )
 
 //START OMIT
-var magicianActions = []string{"unlocks jacket", "unties jacket", "takes off jacket"}
 func assistant(actions []string) <-chan int {
 	out := make(chan int)
 	go func() {
@@ -20,6 +19,7 @@ func assistant(actions []string) <-chan int {
 	return out
 }
 func magician(items <-chan int) <-chan string {
+	magicianActions := []string{"unlocks jacket", "unties jacket", "takes off jacket"}
 	out := make(chan string)
 	go func() {
 		for i := range items {

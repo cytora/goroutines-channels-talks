@@ -38,6 +38,7 @@ func main() {
 	actions := assistant(assistantActions)
 	out := magician(actions)
 
+	// final step of the pipeline
 	for item := range out {
 		time.Sleep(1 * time.Second)
 		fmt.Printf("The magician %s\n", item)

@@ -59,13 +59,6 @@ The key takeaways have been:
 - The `sync` package contains the `Mutex` and `WaitGroup`. These are locks that can be used for resource locking and goroutine synchronization
 - Channels *should* be used for resource sharing, while locks can be used for synchronization when no other information is shared
 
-* Concurrency Patterns
-Now that we understand the basics of Goroutines, channels and synchronization, let's have a look at some common problems and patterns.
-We will have a look at the following patterns:
-
-- Signalling that work is finished
-- Pipelines: processing data in a series of stages connected by channels, where each stage is a group of goroutines running the same function
-- Fan-out, Fan-in: Multiplexing and Demultiplexing to optimise resource usage
 
 * Recap - Closing channels
 In session 2, we discussed closing channels to signal that no more values are going to be sent through.
@@ -90,6 +83,14 @@ We are allowed to convert a bidirectional channel into the unidirectional channe
 * Passing unidirectional channels to functions
 
 .play code-session3/unidirectional_channel_syntax.go /START OMIT/,/END OMIT/
+
+* Concurrency Patterns
+Now that we understand the basics of Goroutines, channels and synchronization, let's have a look at some common problems and patterns.
+We will have a look at the following patterns:
+
+- Signalling that work is finished
+- Pipelines: processing data in a series of stages connected by channels, where each stage is a group of goroutines running the same function
+- Fan-out, Fan-in: Multiplexing and Demultiplexing to optimise resource usage
 
 * The Channel Card Shuffle - the shuffle
 
@@ -154,17 +155,21 @@ A function can read from multiple inputs and proceed until all are closed by mul
 
 .image https://media.giphy.com/media/D0WOL0ogZIoG4/giphy.gif _ 350
 
-* The Fan Out Infinite Hat - the performers
+* The Fan Infinite Hat - the concealers
 
-.code code-session3/pipeline_infinite_hat.go /START OMIT/,/END OMIT/
+.code code-session3/fan_infinite_hat_concealers.go /START OMIT/,/END OMIT/
+
+* The Fan Out Infinite Hat - the revealers
+
+.code code-session3/fan_infinite_hat_revealers.go /START OMIT/,/END OMIT/
 
 * The Fan Out Infinite Hat - the trick
 
-.play code-session3/success/pipeline_infinite_hat.go /START OMIT/,/END OMIT/
+.play code-session3/success/fan_infinite_hat.go /START OMIT/,/END OMIT/
 
 * The hat is a lie!
 We have modelled the infinite hat trick without even representing a hat!
-The concealers fanned out by pushing items to the buffered channel, then the revealer fanned in by reading all the items.
+The concealers fanned out by pushing items to their own channel, then the revealer fanned merging all the items back and revealing them!
 
 .image https://media.giphy.com/media/LpLd2NGvpaiys/giphy.gif _ 450
 
