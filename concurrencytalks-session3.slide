@@ -174,8 +174,38 @@ The concealers fanned out by pushing items to their own channel, then the reveal
 .image https://media.giphy.com/media/LpLd2NGvpaiys/giphy.gif _ 450
 
 * The Go race detector
+Race conditions are elusive bugs that can be difficult to find and debug.
+The Go race detector is integrated with the go tool chain.
+
+.code code-session3/go_race_syntax.go /START OMIT/,/END OMIT/
+
+The race detector is integrated with the go tool chain.
+When the `-race` command-line flag is set, the compiler instruments all memory accesses with code that records when and how the memory was accessed, while the runtime library watches for unsynchronized accesses to shared variables.
+When such "racy" behavior is detected, a warning is printed.
+
+* Remember the racy infinite hat from session 1?
+
+.play code-session3/failed/racy_infinite_hat.go /START OMIT/,/END OMIT/
+
+* Let's see what the go race detector has to say about it!
+
+.code code-session3/go_race_output.go /START OMIT/,/END OMIT/
+
+* Race detector in Production
+
+The race detector can detect race conditions only when they are actually triggered by running code, which means it's important to run race-enabled binaries under realistic workloads.
+However, race-enabled binaries can use ten times the CPU and memory, so it is impractical to enable the race detector all the time.
+
+One way out of this dilemma is to run some tests with the race detector enabled.
+Load tests and integration tests are good candidates, since they tend to exercise concurrent parts of the code.
+Another approach using production workloads is to deploy a single race-enabled instance within a pool of running servers.
 
 * Real life examples
+Common uses of goroutines are:
+
+- Background processing of large files
+- Handling user requests in web servers
+- Pushing tracking events/logs in the background
 
 * Useful links
 Go by example: Channel directions
@@ -189,6 +219,10 @@ Starting and stopping things with a signal channel
 Go Concurrency Patterns: Pipelines and cancellation
 
 .link https://blog.golang.org/pipelines
+
+The Go Blog - Introducing the Go Race Detector
+
+.link https://blog.golang.org/race-detector
 
 * This concludes our epic journey!
 Thank you to all my colleagues at Cytora for listening and supporting me during this Goroutines & Channels 3 talk series.
