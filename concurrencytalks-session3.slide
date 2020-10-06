@@ -217,11 +217,30 @@ Load tests and integration tests are good candidates, since they tend to exercis
 Another approach using production workloads is to deploy a single race-enabled instance within a pool of running servers.
 
 * Real life examples
-Common uses of goroutines are:
+In session 1, we said common uses of goroutines were:
 
-- Background processing of large files
-- Handling user requests in web servers
-- Pushing tracking events/logs in the background
+- _Background_ _processing_ _of_ _large_ _files_: could be implemented by splitting the file into batches and using pipelines for processing
+- _Handling_ _user_ _requests_ _in_ _web_ _servers_: spinning off a goroutine per request then communicating via channels; we can use signal channels or contexts for cancellation/work stopping
+- _Pushing_ _tracking_ _events/logs_ _in_ _the_ _background_: could be implemented using buffered channels and worker pools to limit throughput and reuse workers
+
+The concurrency patterns we've learned this session have a wide variety of applications... and not just in the field of magic!
+
+* Magic show curtain drop
+This concludes our third and final session of our Goroutines & Channels magic shows! We hope you have enjoyed yourselves!
+
+Our magicians have shown you the following magic tricks:
+
+- *Card* *Shuffle* trick: closing a signal channel to tell goroutines to finish their work
+- *Straitjacket* *Escape* trick: using the pipeline pattern to pass actions to different workers and produce different results
+- *Infinite* *Hat* trick: using the worker pool pattern to have workers pick up data as soon as it's ready
+
+We also had a look at the Go race detector and discussed some real world applications to the concepts we learned.
+
+* This concludes our epic journey!
+Thank you to all my colleagues at Cytora for listening and for supporting me during this Goroutines & Channels 3 talk series! You are all my infinite hat of support!
+I've learned a lot on this journey and I hope you have too.
+
+.image gophermicdrop.png _ 400
 
 * Self-study: Fan out, Fan in
 Multiple functions can read from the same channel until that channel is closed; this is called *fan-out*. This provides a way to distribute work amongst a group of workers to parallelize CPU use and I/O.
@@ -241,7 +260,6 @@ A function can read from multiple inputs and proceed until all are closed by mul
 * Self-study: The Fan Out Infinite Hat - the trick
 
 .play code-session3/success/fan_infinite_hat.go /START OMIT/,/END OMIT/
-
 
 * Useful links
 Go by example: Channel directions
@@ -264,7 +282,6 @@ Golangbot - buffered channels and worker pools
 
 .link https://golangbot.com/buffered-channels-worker-pools/
 
-* This concludes our epic journey!
-Thank you to all my colleagues at Cytora for listening and supporting me during this Goroutines & Channels 3 talk series.
+* Concurrency in Go - book
 
-.image gophermicdrop.png _ 400
+.image code-session3/concurrency_in_go.png _ 400
