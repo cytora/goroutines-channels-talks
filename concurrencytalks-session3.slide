@@ -45,6 +45,7 @@ In the next 45-60min we will cover:
 - Recap of channels
 - Signalling to Goroutines that work is finished
 - Pipelines
+- Buffered channels & worker pools
 - The Go race detector
 - Real world examples
 - Self-Study: Fan-out, Fan-in
@@ -148,6 +149,31 @@ The first stage is sometimes called the *source* or *producer*; the last stage, 
 
 .play code-session3/success/pipeline_trick.go /START OMIT/,/END OMIT/
 
+* Buffered channels & worker pools
+As we remember from session 2, a *buffered* channel was a channel which could hold a limited number of values in its queue before blocking.
+One of the important uses of buffered channels is the implementation of *worker* *pools*.
+
+We need the following core functionalities implemented to a worker pool
+
+- Creation of a pool of Goroutines which listen on an input buffered channel waiting for jobs to be assigned
+- Addition of jobs to the input buffered channel
+- Writing results to an output buffered channel after job completion
+- Read and print results from the output buffered channel
+
+* The Worker Pool Infinite Hat - the performers
+
+.code code-session3/worker_pool_concealers.go /START OMIT/,/END OMIT/
+
+* The Worker Pool Infinite Hat - the trick
+
+.play code-session3/success/worker_pool_infinite_hat.go /START OMIT/,/END OMIT/
+
+* The hat is a lie!
+We have modelled the infinite hat trick without even representing a hat struct!
+The concealers all listened for items, hid them in the hat, then the revealer picked them up and showed them!
+
+.image https://media.giphy.com/media/LpLd2NGvpaiys/giphy.gif _ 450
+
 * The Go race detector
 Race conditions are elusive bugs that can be difficult to find and debug.
 The Go race detector is integrated with the go tool chain.
@@ -159,12 +185,27 @@ When the `-race` command-line flag is set, the compiler instruments all memory a
 When such "racy" behavior is detected, a warning is printed.
 
 * Remember the racy infinite hat from session 1?
+Back in session 1 we didn't have all this knowledge about channels, so we represented the infinite hat with a struct. Performers would then all rush to put their items in the hat without any synchronization.
+This resulted in a *race* *condition*, where some of the performers would overwrite each other's work.
+
+.code code-session3/racy_infinite_hat.go /START OMIT/,/END OMIT/
+
+* Remember the racy infinite hat from session 1?
 
 .play code-session3/failed/racy_infinite_hat.go /START OMIT/,/END OMIT/
 
 * Let's see what the go race detector has to say about it!
 
 .code code-session3/go_race_output.go /START OMIT/,/END OMIT/
+
+* The race detector is such a boss!
+I had to run the race detector outside of the this Go presentation, but it correctly flags up the line numbers!
+Line 12 is the line where we add contents to the hat and that's where the race condition is occurring.
+
+.image code-session3/race_detector_line.png
+
+We can then go investigate the code on that line and see what is going on.
+Thanks, race detector!
 
 * Race detector in Production
 
@@ -201,11 +242,6 @@ A function can read from multiple inputs and proceed until all are closed by mul
 
 .play code-session3/success/fan_infinite_hat.go /START OMIT/,/END OMIT/
 
-* Self-study: The hat is a lie!
-We have modelled the infinite hat trick without even representing a hat!
-The concealers fanned out by pushing items to their own channel, then the revealer fanned merging all the items back and revealing them!
-
-.image https://media.giphy.com/media/LpLd2NGvpaiys/giphy.gif _ 450
 
 * Useful links
 Go by example: Channel directions
@@ -223,6 +259,10 @@ Go Concurrency Patterns: Pipelines and cancellation
 The Go Blog - Introducing the Go Race Detector
 
 .link https://blog.golang.org/race-detector
+
+Golangbot - buffered channels and worker pools
+
+.link https://golangbot.com/buffered-channels-worker-pools/
 
 * This concludes our epic journey!
 Thank you to all my colleagues at Cytora for listening and supporting me during this Goroutines & Channels 3 talk series.

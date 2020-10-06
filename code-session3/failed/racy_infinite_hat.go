@@ -17,7 +17,7 @@ var items = []string{"rabbit", "bottle", "handkerchief", "bowling ball", "flower
 func hatMagician(item string, wg *sync.WaitGroup, hat *InfiniteHat) {
 	defer wg.Done()
 	hat.placeItem(item)
-	fmt.Printf("The perfomer places %s in the hat\n", item)
+	fmt.Printf("The performer places %s in the hat\n", item)
 	time.Sleep(500 * time.Millisecond)
 }
 func main() {
