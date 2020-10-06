@@ -45,9 +45,9 @@ In the next 45-60min we will cover:
 - Recap of channels
 - Signalling to Goroutines that work is finished
 - Pipelines
-- Fan-out, Fan-in
 - The Go race detector
 - Real world examples
+- Self-Study: Fan-out, Fan-in
 
 * Recap - channels & synchronization
 In the past 2 weeks, we've gone on an epic journey with Goroutines and channels.
@@ -148,31 +148,6 @@ The first stage is sometimes called the *source* or *producer*; the last stage, 
 
 .play code-session3/success/pipeline_trick.go /START OMIT/,/END OMIT/
 
-* Fan out, Fan in
-Multiple functions can read from the same channel until that channel is closed; this is called *fan-out*. This provides a way to distribute work amongst a group of workers to parallelize CPU use and I/O.
-
-A function can read from multiple inputs and proceed until all are closed by multiplexing the input channels onto a single channel that's closed when all the inputs are closed. This is called *fan-in*.
-
-.image https://media.giphy.com/media/D0WOL0ogZIoG4/giphy.gif _ 350
-
-* The Fan Infinite Hat - the concealers
-
-.code code-session3/fan_infinite_hat_concealers.go /START OMIT/,/END OMIT/
-
-* The Fan Out Infinite Hat - the revealers
-
-.code code-session3/fan_infinite_hat_revealers.go /START OMIT/,/END OMIT/
-
-* The Fan Out Infinite Hat - the trick
-
-.play code-session3/success/fan_infinite_hat.go /START OMIT/,/END OMIT/
-
-* The hat is a lie!
-We have modelled the infinite hat trick without even representing a hat!
-The concealers fanned out by pushing items to their own channel, then the revealer fanned merging all the items back and revealing them!
-
-.image https://media.giphy.com/media/LpLd2NGvpaiys/giphy.gif _ 450
-
 * The Go race detector
 Race conditions are elusive bugs that can be difficult to find and debug.
 The Go race detector is integrated with the go tool chain.
@@ -206,6 +181,31 @@ Common uses of goroutines are:
 - Background processing of large files
 - Handling user requests in web servers
 - Pushing tracking events/logs in the background
+
+* Self-study: Fan out, Fan in
+Multiple functions can read from the same channel until that channel is closed; this is called *fan-out*. This provides a way to distribute work amongst a group of workers to parallelize CPU use and I/O.
+
+A function can read from multiple inputs and proceed until all are closed by multiplexing the input channels onto a single channel that's closed when all the inputs are closed. This is called *fan-in*.
+
+.image https://media.giphy.com/media/D0WOL0ogZIoG4/giphy.gif _ 350
+
+* Self-study: The Fan Infinite Hat - the concealers
+
+.code code-session3/fan_infinite_hat_concealers.go /START OMIT/,/END OMIT/
+
+* Self-study: The Fan Out Infinite Hat - the revealers
+
+.code code-session3/fan_infinite_hat_revealers.go /START OMIT/,/END OMIT/
+
+* Self-study: The Fan Out Infinite Hat - the trick
+
+.play code-session3/success/fan_infinite_hat.go /START OMIT/,/END OMIT/
+
+* Self-study: The hat is a lie!
+We have modelled the infinite hat trick without even representing a hat!
+The concealers fanned out by pushing items to their own channel, then the revealer fanned merging all the items back and revealing them!
+
+.image https://media.giphy.com/media/LpLd2NGvpaiys/giphy.gif _ 450
 
 * Useful links
 Go by example: Channel directions
