@@ -74,10 +74,11 @@ The `for` `range` exits and stops receiving values once the channel is closed.
 
 * Unidirectional channels
 When using channels as function parameters, you can specify if a channel is meant to only send or receive values.
+`<-chan` is a *receive-only* channel, while `chan<-` is a *send-only* channel.
 This specificity increases the type-safety of the program. A compile error will be raised when attempting an unsupported operation.
 
 By default a channel is bidirectional, but we can create a unidirectional channel also.
-We are allowed to convert a bidirectional channel into the unidirectional channel, or in other words, you can convert a bidirectional channel into a receive-only or send-only channel, but vice versa is not possible.
+We are allowed to convert a bidirectional channel into the unidirectional channel, but vice versa is not possible.
 
 .image https://media.giphy.com/media/xUPJPtOPpj7konQPZu/giphy.gif _ 350
 
@@ -91,7 +92,8 @@ We will have a look at the following patterns:
 
 - Signalling that work is finished
 - Pipelines: processing data in a series of stages connected by channels, where each stage is a group of goroutines running the same function
-- Fan-out, Fan-in: Multiplexing and Demultiplexing to optimise resource usage
+- Worker pools: using buffered channels to implement worker pools in Golang, where each worker picks up jobs as soon as they are available and then returns to the pool for more work
+- Fan-out, Fan-in: Multiplexing and Demultiplexing to optimise resource usage (self-study)
 
 * The Channel Card Shuffle - the shuffle
 
