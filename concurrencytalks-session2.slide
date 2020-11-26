@@ -1,46 +1,44 @@
-Goroutines & channels II
-Peeking behind the magic curtain
-30 Sep 2020
+Cytora Golang Academy
+Goroutines & channels
 
 Adelina Simion
+Senior Software Engineer, Cytora
 adelina.simion@cytora.com
+@classic_addetz
+
+*
+.image images/about-me.png
+
+*
+.image images/about-cytora.png
 
 * Format of talks
 We have three talks/magic shows each 45-60mins.
-*Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go* (23/09/2020)
+*Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go*
 introduces and covers the basics.
-*Apprentice* *to* *Illusionist:* *channels* *deep* *dive* (30/09/2020)
+*Apprentice* *to* *Illusionist:* *channels* *deep* *dive*
 discusses more complex channels operations, their usage and their limitations.
-*Master* *Illusionist:* *concurrency* *patterns* (07/10/2020)
+*Master* *Illusionist:* *concurrency* *patterns*
 presents Go concurrency patterns and real world examples.
 
 .image https://media.giphy.com/media/21T9PmWttOb0EFrrwK/giphy.gif _ 450
 
-* Running slide deck locally
+* About this slide deck
 These slides are built with `go` `present`.
 
 .link https://godoc.org/golang.org/x/tools/present
 
-As we have not made them public, you can only see them locally.
-To see them and run the code examples you must:
-
-- Have `Go` installed
-- Checkout the slides repository
+You can find the slide deck repository on GitHub
 
 .link https://github.com/cytora/goroutines-channels-talks
 
-- Install present locally with `go` `get` `golang.org/x/tools/cmd/present`
-- Run `present` `-use_playground` from the terminal
-- View the slides at
+.image images/go_logo.png _ 550
 
-.link http://127.0.0.1:3999/concurrencytalks-session2.slide#1
-
-* Apprentice to Illusionist: channels deep dive
-
-.image https://media.giphy.com/media/XKjcTrzElUjsaeQ1eg/giphy.gif _ 600
+*
+.image images/session2-title.png
 
 * Agenda - Magic show II
-In the next 45-60min we will cover:
+This session will cover:
 
 - Recap of pointers
 - Recap of sending & receiving on channels
@@ -112,7 +110,7 @@ The hat we were modifying was the same as the original hat.
 .play code-session2/success/wg_magic_show.go /START OMIT/,/END OMIT/
 
 * Just as majestic as the first time we saw it!
-The Waitgroup Bullet Catch makes use of the `sync.WaitGroup` to make sure that the assistant and magician goroutines execute in an order that makes sense ... and doesn't ruin the magician's reputation!
+The WaitGroup Bullet Catch makes use of the `sync.WaitGroup` to make sure that the assistant and magician goroutines execute in an order that makes sense ... and doesn't ruin the magician's reputation!
 
 However, the trick also depends on our friends the pointers.
 A pointer to the `sync.WaitGroup` is passed to each goroutine and we mentioned this was *very* important.
@@ -318,6 +316,9 @@ Ardan Labs - the nature of channels in Go
 
 .link https://www.ardanlabs.com/blog/2014/02/the-nature-of-channels-in-go.html
 
-* See you next week!
+* See you next time!
 
 .image https://media.giphy.com/media/7yojoQtevjOCI/giphy.gif _ 550
+
+*
+.image images/keep-in-touch.png

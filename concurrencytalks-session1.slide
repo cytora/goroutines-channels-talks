@@ -1,46 +1,44 @@
-Goroutines & channels I
-Peeking behind the magic curtain
-23 Sep 2020
+Cytora Golang Academy
+Goroutines & channels
 
 Adelina Simion
+Senior Software Engineer, Cytora
 adelina.simion@cytora.com
+@classic_addetz
+
+*
+.image images/about-me.png
+
+*
+.image images/about-cytora.png
 
 * Format of talks
 We have three talks/magic shows each 45-60mins.
-*Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go* (23/09/2020)
+*Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go*
 introduces and covers the basics.
-*Apprentice* *to* *Illusionist:* *channels* *deep* *dive* (30/09/2020)
+*Apprentice* *to* *Illusionist:* *channels* *deep* *dive*
 discusses more complex channels operations, their usage and their limitations.
-*Master* *Illusionist:* *concurrency* *patterns* (07/10/2020)
+*Master* *Illusionist:* *concurrency* *patterns*
 presents Go concurrency patterns and real world examples.
 
 .image https://media.giphy.com/media/21T9PmWttOb0EFrrwK/giphy.gif _ 450
 
-* Running slide deck locally
+* About this slide deck
 These slides are built with `go` `present`.
 
 .link https://godoc.org/golang.org/x/tools/present
 
-As we have not made them public, you can only see them locally.
-To see them and run the code examples you must:
-
-- Have `Go` installed
-- Checkout the slides repository
+You can find the slide deck repository on GitHub
 
 .link https://github.com/cytora/goroutines-channels-talks
 
-- Install present locally with `go` `get` `golang.org/x/tools/cmd/present`
-- Run `present` `-use_playground` from the terminal
-- View the slides at
+.image images/go_logo.png _ 550
 
-.link http://127.0.0.1:3999/concurrencytalks-session1.slide#1
-
-* Easy magic tricks: concurrency basics in Go
-
-.image https://media.giphy.com/media/JOXzH8WcOgR8PLBqtm/giphy.gif _ 500
+*
+.image images/session1-title.png
 
 * Agenda - Magic show I
-In the next 45-60min we will cover:
+This session will cover:
 
 - Concurrency vs parallelism
 - What is a goroutine?
@@ -63,12 +61,11 @@ Everyone knows that `Go` is designed for concurrency, but what is *concurrency*?
 - doing lots of things at once
 - execution is happening simultaneously and independently
 
-
 * The concurrent & parallel magician
 
 The magician shuffles the card deck and entertains his audience with jokes using *paralellism*. He is doing both at the same time.
 
-The magician shuffles the card deck and steals a card using *concurrency*. We are not sure the order in which these events happened.
+The magician shuffles the card deck and steals a card using *concurrency*. At some point, he stopped shuffling and stole a card. But we are not sure the order in which these events happened.
 
 .image https://media.giphy.com/media/UV4liSdOaKdw3V9HGI/giphy.gif _ 350
 
@@ -97,7 +94,6 @@ Most importantly, goroutines allow our programs to run more than one function.
 
 * The go keyword
 Prefix the function or method call with the keyword `go` and you will have a new Goroutine running concurrently with the main goroutine.
-Abracadabra! Let the magic tricks begin!
 
 .code code-session1/goroutines/go_keyword.go /START OMIT/,/END OMIT/
 
@@ -162,14 +158,24 @@ Let's recount one of the basic magic school lessons about pointers & argument pa
 
 - A *pointer* is a memory address to a variable. The `iptr:=&i` syntax gives the memory address of `i`, i.e. a pointer to `i` is assigned to variable `iptr`
 - The `*iptr` syntax *dereferences* the pointer from its memory address to the current value at that address
-- Arguments to functions are passed by copy in Go. Any changes we make to the copy will be lost, as the copy is destroyed by the garbage collector once the function exits
 - Passing pointers to functions allow us to make permanent changes to variables
-- Pointers themselves are passed by copy, so reassigning the pointer to a different variable address will not be a persist outside the scope of the function
 - The rules of pointer apply to *method* *receivers* also, as they can be considered the first *implicit* argument of methods.
 
 * The Rabbit Hat-trick
 
-.play code-session1/waitgroups/pointers_argument_passing.go  /START OMIT/,/END OMIT/
+.play code-session1/pointers/copy_argument_passing.go  /START OMIT/,/END OMIT/
+
+* Oh noes! The hat trick failed!
+We tried to place a rabbit and flowers in the hat, but it remained empty!
+
+This is because of the way we pass arguments to functions in Go.
+Arguments to functions are passed by copy in Go. Any changes we make to the copy will be lost, as the copy is destroyed by the garbage collector once the function exits
+
+.image https://media.giphy.com/media/YOqgY2wQazNKleTJ5D/giphy.gif _ 450
+
+* The Pointer Rabbit Hat-trick
+
+.play code-session1/pointers/pointers_argument_passing.go  /START OMIT/,/END OMIT/
 
 * A successful classic hat trick!
 As we saw in the hat trick, assigning the rabbit to the hat only succeeds once we passed a pointer to the hat. Otherwise, the rabbit is put inside a copy of the hat, which only lives inside function scope, and the trick fails!
@@ -287,6 +293,8 @@ The arrow points outwards from `a` and hence we are reading from channel `a` and
 The syntax to *write* to a channel `a` is `a` `<-` `data`
 The arrow points towards `a` and hence we are writing `data` to channel `a`.
 
+.image https://media.giphy.com/media/ZMqgw8Oq7TRKg/giphy.gif _ 450
+
 * Channels under the hood
 We can think of each channel consisting of three FIFO (first in, first out) queues:
 
@@ -297,12 +305,11 @@ We can think of each channel consisting of three FIFO (first in, first out) queu
 Each channel internally holds a mutex lock which is used to avoid data races in all kinds of operations.
 
 * Behaviour of channels
-Sending to a full channel? Easy, wait in the sending goroutine queue until there is room in the pipe to put the value
-Receiving from an empty channel? Easy, wait in the receiving goroutine queue until there is a value in the pipe
-Receiving from a closed channel? Easy, send the zero value of that type
-Sending to a closed channel? Panic as we don't to add the goroutine to the sending queue and block it when we know other values are not going to come
 
-.image channel_behaviour.png _ 950
+- Sending to a full channel? Easy, wait in the sending goroutine queue until there is room in the pipe to put the value
+- Receiving from an empty channel? Easy, wait in the receiving goroutine queue until there is a value in the pipe
+- Receiving from a closed channel? Easy, send the zero value of that type
+- Sending to a closed channel? Panic as we don't to add the goroutine to the sending queue and block it when we know other values are not going to come
 
 * The Channel Quick Change Trick
 
@@ -361,6 +368,9 @@ Go by example - channel buffering
 
 .link https://gobyexample.com/channel-buffering
 
-* See you next week!
+* See you next time!
 
 .image https://media.giphy.com/media/7yojoQtevjOCI/giphy.gif _ 550
+
+*
+.image images/keep-in-touch.png

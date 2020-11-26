@@ -1,46 +1,44 @@
-Goroutines & channels III
-Peeking behind the magic curtain
-07 Oct 2020
+Cytora Golang Academy
+Goroutines & channels
 
 Adelina Simion
+Senior Software Engineer, Cytora
 adelina.simion@cytora.com
+@classic_addetz
+
+*
+.image images/about-me.png
+
+*
+.image images/about-cytora.png
 
 * Format of talks
 We have three talks/magic shows each 45-60mins.
-*Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go* (23/09/2020)
+*Easy* *magic* *tricks:* *concurrency* *basics* *in* *Go*
 introduces and covers the basics.
-*Apprentice* *to* *Illusionist:* *channels* *deep* *dive* (30/09/2020)
+*Apprentice* *to* *Illusionist:* *channels* *deep* *dive*
 discusses more complex channels operations, their usage and their limitations.
-*Master* *Illusionist:* *concurrency* *patterns* (07/10/2020)
+*Master* *Illusionist:* *concurrency* *patterns*
 presents Go concurrency patterns and real world examples.
 
 .image https://media.giphy.com/media/21T9PmWttOb0EFrrwK/giphy.gif _ 450
 
-* Running slide deck locally
+* About this slide deck
 These slides are built with `go` `present`.
 
 .link https://godoc.org/golang.org/x/tools/present
 
-As we have not made them public, you can only see them locally.
-To see them and run the code examples you must:
-
-- Have `Go` installed
-- Checkout the slides repository
+You can find the slide deck repository on GitHub
 
 .link https://github.com/cytora/goroutines-channels-talks
 
-- Install present locally with `go` `get` `golang.org/x/tools/cmd/present`
-- Run `present` `-use_playground` from the terminal
-- View the slides at
+.image images/go_logo.png _ 550
 
-.link http://127.0.0.1:3999/concurrencytalks-session3.slide#1
-
-* Master Illusionist: concurrency patterns
-
-.image https://media.giphy.com/media/3o6Zthq1yAc3Fdbsis/giphy.gif _ 600
+*
+.image images/session3-title.png
 
 * Agenda - Magic show III
-In the next 45-60min we will cover:
+This session will cover:
 
 - Recap of channels
 - Signalling to Goroutines that work is finished
@@ -287,3 +285,10 @@ Golangbot - buffered channels and worker pools
 * Concurrency in Go - book
 
 .image code-session3/concurrency_in_go.png _ 400
+
+* Thanks for coming to our show!
+
+.image https://media.giphy.com/media/10hO3rDNqqg2Xe/giphy.gif _ 600
+
+*
+.image images/keep-in-touch.png
