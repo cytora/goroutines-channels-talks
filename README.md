@@ -17,3 +17,6 @@ To see them and run the code examples locally you must:
 - View the slides at
 
 http://127.0.0.1:3999/concurrencytalks.slide#1
+
+
+This is a change to a repo without the ReviewMe bot. 
