@@ -32,8 +32,6 @@ You can find the slide deck repository on GitHub
 
 .link https://github.com/cytora/goroutines-channels-talks
 
-.image images/go_logo.png _ 550
-
 *
 .image images/session3-title.png
 
@@ -240,7 +238,7 @@ We also had a look at the Go race detector and discussed some real world applica
 Thank you to all my colleagues at Cytora for listening and for supporting me during this Goroutines & Channels 3 talk series! You are all my infinite hat of support!
 I've learned a lot on this journey and I hope you have too.
 
-.image gophermicdrop.png _ 400
+.image https://media.giphy.com/media/mVJ5xyiYkC3Vm/giphy.gif _ 400
 
 * Self-study: Fan out, Fan in
 Multiple functions can read from the same channel until that channel is closed; this is called *fan-out*. This provides a way to distribute work amongst a group of workers to parallelize CPU use and I/O.

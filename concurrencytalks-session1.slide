@@ -1,5 +1,5 @@
 Cytora Golang Academy
-Goroutines & channels
+Part One
 
 Adelina Simion
 Senior Software Engineer, Cytora
@@ -31,8 +31,6 @@ These slides are built with `go` `present`.
 You can find the slide deck repository on GitHub
 
 .link https://github.com/cytora/goroutines-channels-talks
-
-.image images/go_logo.png _ 550
 
 *
 .image images/session1-title.png
@@ -206,6 +204,7 @@ The `sync.WaitGroup`:
 - Adds `n` to the counter when you call `Add(n)`
 - Removes 1 from the counter when you call `Done()`
 - `Wait()` blocks the current goroutine and it will be released when the counter is zero
+- Should always be passed by reference/pointer to goroutines
 
 * The WaitGroup Bullet Catch
 .play code-session1/waitgroups/wg_magic_show.go  /START OMIT/,/END OMIT/
@@ -247,6 +246,7 @@ The `sync.Mutex` is used to provide a locking mechanism:
 - Any code that is present between a call to `Lock` and `Unlock` will be executed by only one Goroutine. This prevents intermittent bugs and inconsistent results
 - If one Goroutine already holds the lock and if a new Goroutine is trying to acquire a lock, the new Goroutine will be blocked until the mutex is unlocked
 - Mutexes are used to make *threadsafe* structs
+- Should always be passed by reference/pointer to goroutines
 
 * The Mutex Infinite Hat Trick - the hat
 We will make our infinite hat thread safe with a mutex so only one performer can place items in it at a time.
