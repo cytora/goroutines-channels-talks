@@ -44,7 +44,7 @@ func main() {
 
 	time.Sleep(1 * time.Second)
 	fmt.Println("No more cards, thanks!")
-	close(signal) // close signal to tell the magician to stop the shufflw
+	close(signal) // close signal to tell the magician to stop the shuffle
 	wg.Wait()    // wait for magician to finish his work
 
 	fmt.Println("The magic show has ended!")
