@@ -18,8 +18,4 @@ To see them and run the code examples locally you must:
 - Run `present -use_playground` from the terminal
 - View the slides at
 
-http://127.0.0.1:3999/concurrencytalks-session1.slide#1
-
-http://127.0.0.1:3999/concurrencytalks-session2.slide#1
-
-http://127.0.0.1:3999/concurrencytalks-session3.slide#1
+http://127.0.0.1:3999/
