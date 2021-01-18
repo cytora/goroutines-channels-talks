@@ -7,10 +7,10 @@ adelina.simion@cytora.com
 @classic_addetz
 
 * About me
-.image images/about-me.png
+.image assets/about-me.png
 
 * About Cytora
-.image images/about-cytora.png
+.image assets/about-cytora.png
 
 * Format of talks
 We have three talks/magic shows each 45-60mins.
@@ -33,7 +33,7 @@ You can find the slide deck repository on GitHub
 .link https://github.com/cytora/goroutines-channels-talks
 
 * Our first magic show!
-.image images/session1-title.png
+.image assets/session1-title.png
 
 * Agenda - Magic show I
 This session will cover:
@@ -373,4 +373,4 @@ Go by example - channel buffering
 .image https://media.giphy.com/media/7yojoQtevjOCI/giphy.gif _ 550
 
 * Keep in touch with Cytora!
-.image images/keep-in-touch.png
+.image assets/keep-in-touch.png

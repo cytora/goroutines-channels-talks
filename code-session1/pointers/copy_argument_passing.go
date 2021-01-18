@@ -9,7 +9,7 @@ import (
 type CopyHat struct {
 	contents string
 }
-func hatTrickCopy(hat CopyHat)       {
+func hatTrickCopy(hat CopyHat) {
 	hat.contents = "a rabbit"
 }
 func (h CopyHat) trickCopy() {
