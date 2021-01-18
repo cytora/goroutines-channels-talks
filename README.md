@@ -1,5 +1,5 @@
-# Goroutines & Channels talks
-This is the repo for the Goroutines & Channels talks. 
+# Cytora Golang Academy
+This is the repo for the Goroutines & Channels talks for the Cytora Golang Academy. 
 
 
 ## Local run
