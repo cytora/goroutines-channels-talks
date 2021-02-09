@@ -3,16 +3,16 @@ package main
 import "fmt"
 
 func main() {
-	chan1 := make(chan string)
-	chan2 := make(chan string)
+	cards := make(chan string)
+	coins := make(chan string)
 	//START OMIT
 	select {
-	case in1 := <-chan1:
-		fmt.Println(in1)
-	case in2 := <-chan2:
-		fmt.Println(in2)
+	case card := <- cards:
+		fmt.Printf("%s pulled from the deck!\n", card)
+	case coin:= <- coins:
+		fmt.Printf("%s pulled from behind your ear!\n", coin)
 	default:
-		fmt.Println("no value received")
+		fmt.Println("No card or coin received!")
 	}
 	//END OMIT
 

@@ -6,11 +6,11 @@ Senior Software Engineer, Cytora
 adelina.simion@cytora.com
 @classic_addetz
 
-*
-.image images/about-me.png
+* About me
+.image assets/about-me.png
 
-*
-.image images/about-cytora.png
+* About Cytora
+.image assets/about-cytora.png
 
 * Format of talks
 We have three talks/magic shows each 45-60mins.
@@ -32,8 +32,8 @@ You can find the slide deck repository on GitHub
 
 .link https://github.com/cytora/goroutines-channels-talks
 
-*
-.image images/session2-title.png
+* Our second magic show!
+.image assets/session2-title.png
 
 * Agenda - Magic show II
 This session will cover:
@@ -176,11 +176,11 @@ The resulting value of `make(chan` `T)` is a reference to an underlying channel 
 Rest assured, the pointers are there working their magic with the channels!
 
 * Closing channels
-Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel.
+Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel using `close(ch)`.
 A closed channel will *immediately* return the zero value of that type when read from.
 Receivers can use an additional variable while receiving data from the channel to check whether the channel has been closed.
 
-`v,` `ok` `:=` `<-ch`
+.code code-session2/close_syntax.go /START OMIT/,/END OMIT/
 
 In the above statement `ok` is true if the value was received by a successful send operation to a channel. If `ok` is false it means that we are reading from a closed channel.
 
@@ -220,7 +220,7 @@ We managed the same trick but the for range made the shuffle more code succint. 
 The `select` statement is used to choose from multiple send/receive channel operations.
 The `select` statement blocks until one of the send/receive operation is ready.
 If multiple operations are ready, one of them is chosen at random.
-The `default` case in a `select` statement is executed when none of the other case is ready. This is generally used to prevent the `select` statement from blocking.
+The `default` case in a `select` statement is executed when none of the other cases are ready. This is generally used to prevent the `select` statement from blocking.
 
 .code code-session2/select_syntax.go /START OMIT/,/END OMIT/
 
@@ -318,5 +318,5 @@ Ardan Labs - the nature of channels in Go
 
 .image https://media.giphy.com/media/7yojoQtevjOCI/giphy.gif _ 550
 
-*
-.image images/keep-in-touch.png
+* Keep in touch!
+.image assets/keep-in-touch.png
