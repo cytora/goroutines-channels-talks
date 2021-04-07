@@ -6,11 +6,11 @@ Senior Software Engineer, Cytora
 adelina.simion@cytora.com
 @classic_addetz
 
-*
-.image images/about-me.png
+* About me
+.image assets/about-me.png
 
-*
-.image images/about-cytora.png
+* About Cytora
+.image assets/about-cytora.png
 
 * Format of talks
 We have three talks/magic shows each 45-60mins.
@@ -32,8 +32,8 @@ You can find the slide deck repository on GitHub
 
 .link https://github.com/cytora/goroutines-channels-talks
 
-*
-.image images/session3-title.png
+* Our third magic show!
+.image assets/session3-title.png
 
 * Agenda - Magic show III
 This session will cover:
@@ -288,5 +288,5 @@ Golangbot - buffered channels and worker pools
 
 .image https://media.giphy.com/media/10hO3rDNqqg2Xe/giphy.gif _ 600
 
-*
-.image images/keep-in-touch.png
+* Keep in touch!
+.image assets/keep-in-touch.png
